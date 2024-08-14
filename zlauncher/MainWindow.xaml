@@ -34,10 +34,9 @@
             SelectedItem="{Binding ElementName=NavStart}"
             SelectionChanged="NavView_SelectionChanged"
             IsBackButtonVisible="Collapsed"
-            OpenPaneLength="150"
+            OpenPaneLength="180"
             PaneDisplayMode="Left"
-            IsPaneOpen="True"
-            IsPaneToggleButtonVisible="False">
+            IsPaneOpen="True">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="启动" Tag="Start" x:Name="NavStart">
                     <NavigationViewItem.Icon>

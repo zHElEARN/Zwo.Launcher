@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using zlauncher.Zwift;
@@ -46,6 +47,14 @@ namespace zlauncher.Pages.EnvInfo
                     DetailedVersion.Text = IsZwiftInstalled ? ZwiftManager.GetXmlVersion(ZwiftInstallLocation) : "Î´°²×°";
                 });
             });
+        }
+
+        private void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            var package = new DataPackage();
+            package.SetText(DetailedVersion.Text);
+            Clipboard.SetContent(package);
+            ToggleCopyTeachingTip.IsOpen = true;
         }
     }
 }
