@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="zlauncher.Pages.EnvInfo.EnvInfo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:zlauncher.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    NavigationCacheMode="Enabled">
+
+    <Grid>
+        <NavigationView
+            x:Name="NavView"
+            PaneDisplayMode="Top"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            SelectedItem="{Binding ElementName=NavZwiftInfo}"
+            SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Zwift信息" Tag="ZwiftInfo" x:Name="NavZwiftInfo" />
+                <NavigationViewItem Content="Zoffline信息" Tag="ZofflineInfo" />
+            </NavigationView.MenuItems>
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Page>

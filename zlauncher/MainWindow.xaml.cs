@@ -8,12 +8,16 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using zlauncher.Pages;
+using zlauncher.Pages.EnvInfo;
+using zlauncher.Zwift;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,11 +37,6 @@ namespace zlauncher
             this.SetTitleBar(AppTitleBar);
         }
 
-        private void NavView_Loaded(object sender, RoutedEventArgs e)
-        {
-            NavView.SelectedItem = NavView.MenuItems[0];
-        }
-
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
@@ -55,11 +54,8 @@ namespace zlauncher
                         case "Start":
                             ContentFrame.Navigate(typeof(StartPage));
                             break;
-                        case "ProgramLog":
-                            ContentFrame.Navigate(typeof(ProgramLogPage));
-                            break;
-                        case "ZofflineLog":
-                            ContentFrame.Navigate(typeof(ZofflineLogPage));
+                        case "EnvInfo":
+                            ContentFrame.Navigate(typeof(EnvInfo));
                             break;
                     }
                 }

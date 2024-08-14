@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="zlauncher.StartPage"
+    x:Class="zlauncher.Pages.StartPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:zlauncher"
@@ -20,13 +20,13 @@
         <Grid Grid.Row="1" VerticalAlignment="Bottom">
             <Grid RowDefinitions="*,*,*" ColumnDefinitions="3*, 5*" HorizontalAlignment="Left" VerticalAlignment="Center" ColumnSpacing="20">
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="zlauncher版本：" />
-                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Zwift版本：" />
-                    <TextBlock Grid.Column="0" Grid.Row="2"  Text="zoffline版本：" />
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Zwift版本：" />
+                <TextBlock Grid.Column="0" Grid.Row="2"  Text="zoffline版本：" />
 
-                    <TextBlock Grid.Column="1" Grid.Row="0" Text="---" />
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="---" />
-                    <TextBlock Grid.Column="1" Grid.Row="2" Text="---" />
-                </Grid>
+                <TextBlock x:Name="ZlauncherVersion" Grid.Column="1" Grid.Row="0" Text="---" />
+                <TextBlock x:Name="ZwiftVersion" Grid.Column="1" Grid.Row="1" Text="---" />
+                <TextBlock x:Name="ZofflineVersion" Grid.Column="1" Grid.Row="2" Text="---" />
+            </Grid>
             <Button HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="8">
                     <FontIcon Glyph="&#xF5B0;" FontSize="28" />

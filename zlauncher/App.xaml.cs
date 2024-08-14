@@ -41,6 +41,18 @@ namespace zlauncher
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            // 程序所在文件夹
+            string basePath = AppDomain.CurrentDomain.BaseDirectory; 
+
+            // 程序文件夹
+            string folderPath = System.IO.Path.Combine(basePath, ".zlauncher");
+
+            // 创建程序文件夹
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
             m_window = new MainWindow();
             m_window.Activate();
         }

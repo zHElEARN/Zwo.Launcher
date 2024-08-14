@@ -31,7 +31,7 @@
         <NavigationView
             Grid.Row="1"
             x:Name="NavView"
-            Loaded="NavView_Loaded"
+            SelectedItem="{Binding ElementName=NavStart}"
             SelectionChanged="NavView_SelectionChanged"
             IsBackButtonVisible="Collapsed"
             OpenPaneLength="150"
@@ -39,16 +39,15 @@
             IsPaneOpen="True"
             IsPaneToggleButtonVisible="False">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="启动" Tag="Start" Icon="Play" />
-                <NavigationViewItemSeparator />
-                <NavigationViewItem Tag="ProgramLog" Content="程序日志">
+                <NavigationViewItem Content="启动" Tag="Start" x:Name="NavStart">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE946;" />
+                        <FontIcon Glyph="&#xE768;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Zoffline日志" Tag="ZofflineLog">
+                <NavigationViewItemSeparator />
+                <NavigationViewItem Content="环境信息" Tag="EnvInfo">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7C3;" />
+                        <FontIcon Glyph="&#xE946;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

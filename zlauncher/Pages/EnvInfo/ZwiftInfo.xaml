@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="zlauncher.Pages.EnvInfo.ZwiftInfo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:zlauncher.Pages.EnvInfo"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    NavigationCacheMode="Enabled">
+
+    <Grid Margin="20" RowSpacing="10">
+        <StackPanel Spacing="10" Orientation="Vertical">
+            <ProgressBar IsIndeterminate="True" x:Name="progressBar" Value="100" />
+            <Grid RowDefinitions="*,*,*" ColumnDefinitions="1*, 6*" RowSpacing="10" ColumnSpacing="20">
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="安装状态：" />
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="安装地址：" />
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="版本：" />
+
+                <TextBlock x:Name="Status" Grid.Column="1" Grid.Row="0" Text="---" />
+                <TextBlock x:Name="Location" Grid.Column="1" Grid.Row="1" Text="---" />
+                <TextBlock x:Name="Version" Grid.Column="1" Grid.Row="2" Text="---" />
+            </Grid>
+            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="False" ExpandDirection="Down" Header="详细版本信息">
+                <Expander.Content>
+                    <TextBox HorizontalAlignment="Stretch" x:Name="DetailedVersion" IsReadOnly="True" Height="60" TextWrapping="Wrap" />
+                </Expander.Content>
+            </Expander>
+        </StackPanel>
+    </Grid>
+</Page>
