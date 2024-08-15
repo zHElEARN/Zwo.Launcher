@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="zlauncher.Pages.EnvInfo.ZwiftInfo"
+    x:Class="Zwo.Launcher.Pages.EnvInformationPage.ZwiftInformationFrame"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:zlauncher.Pages.EnvInfo"
+    xmlns:local="using:Zwo.Launcher.Pages.EnvInformationPage"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:BackdropMaterial.ApplyToRootOrPageBackground="True">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Margin="20" RowSpacing="10">
         <StackPanel Spacing="10" Orientation="Vertical">
@@ -28,10 +28,7 @@
                         <Button x:Name="CopyDetailedVersionButton" Click="CopyDetailedButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE8C8;" />
                         </Button>
-                        <TeachingTip
-                            x:Name="CopyDetailedVersionTeachingTip"
-                            Target="{x:Bind CopyDetailedVersionButton}"
-                            Title="已复制">
+                        <TeachingTip x:Name="CopyDetailedVersionTeachingTip" Target="{x:Bind CopyDetailedVersionButton}" Title="已复制">
                             <TeachingTip.IconSource>
                                 <FontIconSource Glyph="&#xE73E;" />
                             </TeachingTip.IconSource>

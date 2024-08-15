@@ -7,11 +7,9 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -20,14 +18,14 @@ using zlauncher.Zwift;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace zlauncher.Pages.EnvInfo
+namespace Zwo.Launcher.Pages.EnvInformationPage
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ZwiftInfo : Page
+    public sealed partial class ZwiftInformationFrame : Page
     {
-        public ZwiftInfo()
+        public ZwiftInformationFrame()
         {
             this.InitializeComponent();
 
@@ -35,7 +33,7 @@ namespace zlauncher.Pages.EnvInfo
             {
                 string zwiftInstallLocation = task.Result;
 
-                DispatcherQueue.TryEnqueue(async () => { 
+                DispatcherQueue.TryEnqueue(async () => {
                     bool isZwiftInstalled = await ZwiftManager.IsZwiftInstalled();
 
                     ZwiftProgressBar.IsIndeterminate = false;

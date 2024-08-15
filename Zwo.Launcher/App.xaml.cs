@@ -19,7 +19,7 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace zlauncher
+namespace Zwo.Launcher
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -41,13 +41,9 @@ namespace zlauncher
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            // 程序所在文件夹
-            string basePath = AppDomain.CurrentDomain.BaseDirectory; 
-
-            // 程序文件夹
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string folderPath = System.IO.Path.Combine(basePath, ".zlauncher");
 
-            // 创建程序文件夹
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);

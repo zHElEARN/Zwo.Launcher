@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Zwo.Launcher (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Zwo.Launcher (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

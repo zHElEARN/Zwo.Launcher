@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Window
-    x:Class="zlauncher.MainWindow"
+    x:Class="Zwo.Launcher.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:zlauncher"
+    xmlns:local="using:Zwo.Launcher"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -20,31 +20,30 @@
 
         <Grid x:Name="AppTitleBar">
             <TextBlock
-                x:Name="AppTitleTextBlock"
-                Text="zlauncher"
-                TextWrapping="NoWrap"
-                Style="{StaticResource CaptionTextBlockStyle}" 
-                VerticalAlignment="Center"
-                Margin="28,0,0,0" />
+            Text="Zwo.Launcher"
+            TextWrapping="NoWrap"
+            Style="{StaticResource CaptionTextBlockStyle}" 
+            VerticalAlignment="Center"
+            Margin="28,0,0,0" />
         </Grid>
 
         <NavigationView
-            Grid.Row="1"
-            x:Name="NavView"
-            SelectedItem="{Binding ElementName=NavStart}"
-            SelectionChanged="NavView_SelectionChanged"
-            IsBackButtonVisible="Collapsed"
-            OpenPaneLength="180"
-            PaneDisplayMode="Left"
-            IsPaneOpen="True">
+        Grid.Row="1"
+        x:Name="NavView"
+        SelectedItem="{Binding ElementName=NavItemStart}"
+        SelectionChanged="NavView_SelectionChanged"
+        IsBackButtonVisible="Collapsed"
+        OpenPaneLength="180"
+        PaneDisplayMode="Left"
+        IsPaneOpen="True">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="启动" Tag="Start" x:Name="NavStart">
+                <NavigationViewItem Content="启动" Tag="Start" x:Name="NavItemStart">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItemSeparator />
-                <NavigationViewItem Content="环境信息" Tag="EnvInfo">
+                <NavigationViewItem Content="环境信息" Tag="EnvInformation">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </NavigationViewItem.Icon>

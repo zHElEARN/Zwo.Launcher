@@ -73,7 +73,6 @@ namespace zlauncher.Zwift
             });
         }
 
-
         /// <summary>
         /// 获取系统中Zwift安装位置
         /// </summary>
