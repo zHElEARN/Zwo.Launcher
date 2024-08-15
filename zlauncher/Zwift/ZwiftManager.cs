@@ -9,18 +9,27 @@ using System.Xml;
 
 namespace zlauncher.Zwift
 {
-    class ZwiftManager
+    static class ZwiftManager
     {
+        private static Tuple<bool, bool> _cachedIsZwiftInstalled = new Tuple<bool, bool>(false, false);
+        private static string _cachedZwiftKey = null;
+
+        private static Tuple<bool, string> _cachedInstallLocation = new Tuple<bool, string>(false, null);
+        private static Tuple<bool, string> _cachedVersion = new Tuple<bool, string>(false, null);
+        private static Tuple<bool, string> _cachedXmlVersion = new Tuple<bool, string>(false, null);
+
         /// <summary>
-        /// 获取Zwift安装目录
+        /// 检测系统是否安装Zwift
         /// </summary>
-        /// <param name="installLocation">输出 安装目录</param>
         /// <returns>是否安装Zwift</returns>
-        public static async Task<string> GetInstallLocation()
+        public static async Task<bool> IsZwiftInstalled()
         {
             return await Task.Run(() =>
             {
-                string installLocation = null;
+                if (_cachedIsZwiftInstalled.Item1)
+                {
+                    return _cachedIsZwiftInstalled.Item2;
+                }
 
                 Process process = new Process();
                 process.StartInfo.FileName = "cmd.exe";
@@ -57,45 +66,78 @@ namespace zlauncher.Zwift
                     }
                 }
 
-                if (!string.IsNullOrEmpty(zwiftKey))
+                _cachedIsZwiftInstalled = new Tuple<bool, bool>(true, !string.IsNullOrEmpty(zwiftKey));
+                _cachedZwiftKey = zwiftKey;
+
+                return _cachedIsZwiftInstalled.Item2;
+            });
+        }
+
+
+        /// <summary>
+        /// 获取系统中Zwift安装位置
+        /// </summary>
+        /// <returns>Zwift安装位置</returns>
+        public static async Task<string> GetInstallLocation()
+        {
+            return await Task.Run(async () =>
+            {
+                if (_cachedInstallLocation.Item1)
                 {
-                    process = new Process();
-                    process.StartInfo.FileName = "cmd.exe";
-                    process.StartInfo.Arguments = $"/c reg query \"{zwiftKey}\" /v InstallLocation";
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.Start();
-
-                    output.Clear();
-                    while (!process.StandardOutput.EndOfStream)
-                    {
-                        output.AppendLine(process.StandardOutput.ReadLine());
-                    }
-                    process.WaitForExit();
-
-                    string result = output.ToString();
-                    int index = result.IndexOf("REG_SZ", StringComparison.OrdinalIgnoreCase);
-                    if (index != -1)
-                    {
-                        installLocation = result.Substring(index + 6).Trim();
-                        return installLocation;
-                    }
+                    return _cachedInstallLocation.Item2;
+                }
+                if (!await IsZwiftInstalled())
+                {
+                    _cachedInstallLocation = new Tuple<bool, string>(true, string.Empty);
+                    return _cachedInstallLocation.Item2;
                 }
 
-                return string.Empty;
+                Process process = new Process();
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = $"/c reg query \"{_cachedZwiftKey}\" /v InstallLocation";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                StringBuilder output = new StringBuilder();
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    output.AppendLine(process.StandardOutput.ReadLine());
+                }
+                process.WaitForExit();
+
+                string result = output.ToString();
+                int index = result.IndexOf("REG_SZ", StringComparison.OrdinalIgnoreCase);
+                if (index != -1)
+                {
+                    _cachedInstallLocation = new Tuple<bool, string>(true, result.Substring(index + 6).Trim());
+                    return _cachedInstallLocation.Item2;
+                }
+
+                _cachedInstallLocation = new Tuple<bool, string>(true, string.Empty);
+                _cachedIsZwiftInstalled = new Tuple<bool, bool>(true, false);
+                return _cachedInstallLocation.Item2;
             });
         }
 
         /// <summary>
-        /// 获取安装的Zwift版本
+        /// 获取系统中安装的Zwift版本
         /// </summary>
-        /// <param name="zwiftLocation">Zwift安装目录</param>
         /// <returns>Zwift版本</returns>
-        public static string GetVersion(string zwiftLocation)
+        public static async Task<string> GetVersion()
         {
-            string version = string.Empty;
-            string filePath = Path.Combine(zwiftLocation, "Zwift_ver_cur.xml");
+            if (_cachedVersion.Item1)
+            {
+                return _cachedVersion.Item2;
+            }
+            if (!await IsZwiftInstalled())
+            {
+                _cachedVersion = new Tuple<bool, string>(true, string.Empty);
+                return _cachedVersion.Item2;
+            }
+
+            string filePath = Path.Combine(await GetInstallLocation(), "Zwift_ver_cur.xml");
 
             if (!File.Exists(filePath))
             {
@@ -113,24 +155,31 @@ namespace zlauncher.Zwift
                     return "Root element name error.";
                 }
 
-                version = root.GetAttribute("version");
+                return root.GetAttribute("version");
             }
             catch (Exception ex)
             {
                 return $"Unknown error: {ex.Message}";
             }
-
-            return version;
         }
 
         /// <summary>
-        /// 获取安装的Zwift版本 XML格式字符串
+        /// 获取系统中安装的Zwift版本 XML格式字符串
         /// </summary>
-        /// <param name="zwiftLocation">Zwift安装目录</param>
         /// <returns>Zwift版本 XML格式字符串</returns>
-        public static string GetXmlVersion(string zwiftLocation)
+        public static async Task<string> GetXmlVersion()
         {
-            string filePath = Path.Combine(zwiftLocation, "Zwift_ver_cur.xml");
+            if (_cachedVersion.Item1)
+            {
+                return _cachedVersion.Item2;
+            }
+            if (!await IsZwiftInstalled())
+            {
+                _cachedXmlVersion = new Tuple<bool, string>(true, string.Empty);
+                return _cachedXmlVersion.Item2;
+            }
+
+            string filePath = Path.Combine(await GetInstallLocation(), "Zwift_ver_cur.xml");
 
             if (!File.Exists(filePath))
             {

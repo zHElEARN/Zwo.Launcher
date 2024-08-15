@@ -33,28 +33,29 @@ namespace zlauncher.Pages.EnvInfo
 
             ZwiftManager.GetInstallLocation().ContinueWith(task =>
             {
-                string ZwiftInstallLocation = task.Result;
+                string zwiftInstallLocation = task.Result;
 
-                DispatcherQueue.TryEnqueue(() => {
-                    bool IsZwiftInstalled = !string.IsNullOrEmpty(ZwiftInstallLocation);
+                DispatcherQueue.TryEnqueue(async () => { 
+                    bool isZwiftInstalled = await ZwiftManager.IsZwiftInstalled();
 
-                    progressBar.IsIndeterminate = false;
-                    progressBar.ShowError = !IsZwiftInstalled;
+                    ZwiftProgressBar.IsIndeterminate = false;
+                    ZwiftProgressBar.ShowError = !isZwiftInstalled;
 
-                    Status.Text = IsZwiftInstalled ? "已安装" : "未安装";
-                    Location.Text = IsZwiftInstalled ? ZwiftInstallLocation : "未安装";
-                    Version.Text = IsZwiftInstalled ? ZwiftManager.GetVersion(ZwiftInstallLocation) : "未安装";
-                    DetailedVersion.Text = IsZwiftInstalled ? ZwiftManager.GetXmlVersion(ZwiftInstallLocation) : "未安装";
+                    ZwiftStatusText.Text = isZwiftInstalled ? "已安装" : "未安装";
+                    ZwiftLocationText.Text = isZwiftInstalled ? zwiftInstallLocation : "未安装";
+                    ZwiftVersionText.Text = isZwiftInstalled ? await ZwiftManager.GetVersion() : "未安装";
+                    DetailedVersionText.Text = isZwiftInstalled ? await ZwiftManager.GetXmlVersion() : "未安装";
+                    DetailedVersionExpander.IsEnabled = isZwiftInstalled;
                 });
             });
         }
 
-        private void Copy_Click(object sender, RoutedEventArgs e)
+        private void CopyDetailedButton_Click(object sender, RoutedEventArgs e)
         {
             var package = new DataPackage();
-            package.SetText(DetailedVersion.Text);
+            package.SetText(DetailedVersionText.Text);
             Clipboard.SetContent(package);
-            ToggleCopyTeachingTip.IsOpen = true;
+            CopyDetailedVersionTeachingTip.IsOpen = true;
         }
     }
 }

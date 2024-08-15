@@ -7,31 +7,30 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:BackdropMaterial.ApplyToRootOrPageBackground="True"
-    NavigationCacheMode="Enabled">
+    xmlns:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid Margin="20" RowSpacing="10">
         <StackPanel Spacing="10" Orientation="Vertical">
-            <ProgressBar IsIndeterminate="True" x:Name="progressBar" Value="100" />
-            <Grid RowDefinitions="*,*,*" ColumnDefinitions="1*, 6*" RowSpacing="10" ColumnSpacing="20">
+            <ProgressBar IsIndeterminate="True" x:Name="ZwiftProgressBar" Value="100" />
+            <Grid RowDefinitions="*,*,*" ColumnDefinitions="1*,6*" RowSpacing="10" ColumnSpacing="20">
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="安装状态：" />
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="安装地址：" />
                 <TextBlock Grid.Column="0" Grid.Row="2" Text="版本：" />
 
-                <TextBlock x:Name="Status" Grid.Column="1" Grid.Row="0" Text="---" />
-                <TextBlock x:Name="Location" Grid.Column="1" Grid.Row="1" Text="---" />
-                <TextBlock x:Name="Version" Grid.Column="1" Grid.Row="2" Text="---" />
+                <TextBlock x:Name="ZwiftStatusText" Grid.Column="1" Grid.Row="0" Text="---" />
+                <TextBlock x:Name="ZwiftLocationText" Grid.Column="1" Grid.Row="1" Text="---" />
+                <TextBlock x:Name="ZwiftVersionText" Grid.Column="1" Grid.Row="2" Text="---" />
             </Grid>
-            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="False" ExpandDirection="Down">
+            <Expander x:Name="DetailedVersionExpander" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="False" ExpandDirection="Down" IsEnabled="False">
                 <Expander.Header>
                     <Grid>
                         <TextBlock Text="详细版本信息" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                        <Button x:Name="CopyButton" Click="Copy_Click" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="CopyDetailedVersionButton" Click="CopyDetailedButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE8C8;" />
                         </Button>
                         <TeachingTip
-                            x:Name="ToggleCopyTeachingTip"
-                            Target="{x:Bind CopyButton}"
+                            x:Name="CopyDetailedVersionTeachingTip"
+                            Target="{x:Bind CopyDetailedVersionButton}"
                             Title="已复制">
                             <TeachingTip.IconSource>
                                 <FontIconSource Glyph="&#xE73E;" />
@@ -40,7 +39,7 @@
                     </Grid>
                 </Expander.Header>
                 <Expander.Content>
-                    <TextBox HorizontalAlignment="Stretch" x:Name="DetailedVersion" IsReadOnly="True" Height="75" TextWrapping="Wrap" />
+                    <TextBox HorizontalAlignment="Stretch" x:Name="DetailedVersionText" IsReadOnly="True" Height="75" TextWrapping="Wrap" />
                 </Expander.Content>
             </Expander>
         </StackPanel>
