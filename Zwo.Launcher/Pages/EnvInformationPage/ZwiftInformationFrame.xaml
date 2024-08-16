@@ -10,47 +10,49 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="20" RowSpacing="10">
-        <StackPanel Spacing="10" Orientation="Vertical">
-            <ProgressBar IsIndeterminate="True" x:Name="ZwiftProgressBar" Value="100" />
-            
-            <controls:SettingsExpander Header="Zwift 状态" IsExpanded="True" Description="显示当前系统下的 Zwift 状态">
-                <controls:SettingsExpander.HeaderIcon>
-                    <FontIcon Glyph="&#xE946;" />
-                </controls:SettingsExpander.HeaderIcon>
-                <controls:SettingsExpander.Items>
-                    <controls:SettingsCard Header="安装状态">
-                        <TextBlock x:Name="ZwiftStatusText" />
-                    </controls:SettingsCard>
-                    <controls:SettingsCard Header="安装地址">
-                        <TextBlock x:Name="ZwiftLocationText" />
-                    </controls:SettingsCard>
-                    <controls:SettingsCard Header="版本">
-                        <TextBlock x:Name="ZwiftVersionText" />
-                    </controls:SettingsCard>
-                </controls:SettingsExpander.Items>
-            </controls:SettingsExpander>
+    <ScrollView>
+        <Grid Margin="20" RowSpacing="10">
+            <StackPanel Spacing="10" Orientation="Vertical">
+                <ProgressBar IsIndeterminate="True" x:Name="ZwiftProgressBar" Value="100" />
 
-            <controls:SettingsExpander x:Name="DetailedVersionExpander" Header="详细版本信息" Description="显示 Zwift 安装目录下的 Zwift_ver_cur.xml 原始文件信息" IsExpanded="False" IsEnabled="False">
-                <controls:SettingsExpander.HeaderIcon>
-                    <FontIcon Glyph="&#xE943;" />
-                </controls:SettingsExpander.HeaderIcon>
-                <Button x:Name="CopyDetailedVersionButton" Click="CopyDetailedButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Glyph="&#xE8C8;" />
-                        <TextBlock Margin="10,0,0,0" Text="复制信息" />
-                    </StackPanel>
-                </Button>
+                <controls:SettingsExpander Header="Zwift 状态" IsExpanded="True" Description="显示当前系统下的 Zwift 状态">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard Header="安装状态">
+                            <TextBlock x:Name="ZwiftStatusText" />
+                        </controls:SettingsCard>
+                        <controls:SettingsCard Header="安装地址">
+                            <TextBlock x:Name="ZwiftLocationText" />
+                        </controls:SettingsCard>
+                        <controls:SettingsCard Header="版本">
+                            <TextBlock x:Name="ZwiftVersionText" />
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
-                <controls:SettingsExpander.ItemsHeader>
-                    <TextBox x:Name="DetailedVersionText" HorizontalAlignment="Stretch" IsReadOnly="True" Height="75" TextWrapping="Wrap" />
-                </controls:SettingsExpander.ItemsHeader>
-            </controls:SettingsExpander>
-            <TeachingTip x:Name="CopyDetailedVersionTeachingTip" Target="{x:Bind CopyDetailedVersionButton}" Title="已复制">
-                <TeachingTip.IconSource>
-                    <FontIconSource Glyph="&#xE73E;" />
-                </TeachingTip.IconSource>
-            </TeachingTip>
-        </StackPanel>
-    </Grid>
+                <controls:SettingsExpander x:Name="DetailedVersionExpander" Header="详细版本信息" Description="显示 Zwift 安装目录下的 Zwift_ver_cur.xml 原始文件信息" IsExpanded="False" IsEnabled="False">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE943;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <Button x:Name="CopyDetailedVersionButton" Click="CopyDetailedButton_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE8C8;" />
+                            <TextBlock Margin="10,0,0,0" Text="复制信息" />
+                        </StackPanel>
+                    </Button>
+
+                    <controls:SettingsExpander.ItemsHeader>
+                        <TextBox x:Name="DetailedVersionText" HorizontalAlignment="Stretch" IsReadOnly="True" Height="75" TextWrapping="Wrap" />
+                    </controls:SettingsExpander.ItemsHeader>
+                </controls:SettingsExpander>
+                <TeachingTip x:Name="CopyDetailedVersionTeachingTip" Target="{x:Bind CopyDetailedVersionButton}" Title="已复制">
+                    <TeachingTip.IconSource>
+                        <FontIconSource Glyph="&#xE73E;" />
+                    </TeachingTip.IconSource>
+                </TeachingTip>
+            </StackPanel>
+        </Grid>
+    </ScrollView>
 </Page>

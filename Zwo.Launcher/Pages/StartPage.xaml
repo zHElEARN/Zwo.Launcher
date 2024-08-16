@@ -11,21 +11,24 @@
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
             <RowDefinition Height="*" />
             <RowDefinition Height="80" />
         </Grid.RowDefinitions>
 
+        <ProgressBar IsIndeterminate="True" x:Name="LoadingProgressBar" Value="100" />
+
         <!--<Border Grid.Row="0" Background="#2f5cb6"/>
         <Border Grid.Row="1" Background="#1f3d7a"/>-->
-        <Grid Grid.Row="1" VerticalAlignment="Bottom">
+        <Grid Grid.Row="2" VerticalAlignment="Bottom">
             <Grid RowDefinitions="*,*,*" ColumnDefinitions="3*, 5*" HorizontalAlignment="Left" VerticalAlignment="Center" ColumnSpacing="20">
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="zlauncher版本：" />
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="Zwift版本：" />
                 <TextBlock Grid.Column="0" Grid.Row="2"  Text="zoffline版本：" />
 
-                <TextBlock x:Name="ZlauncherVersion" Grid.Column="1" Grid.Row="0" Text="---" />
-                <TextBlock x:Name="ZwiftVersion" Grid.Column="1" Grid.Row="1" Text="---" />
-                <TextBlock x:Name="ZofflineVersion" Grid.Column="1" Grid.Row="2" Text="---" />
+                <TextBlock x:Name="ZlauncherVersion" Grid.Column="1" Grid.Row="0" Text="0.0.1" />
+                <TextBlock x:Name="ZwiftVersion" Grid.Column="1" Grid.Row="1" Text="加载中" />
+                <TextBlock x:Name="ZofflineVersion" Grid.Column="1" Grid.Row="2" Text="加载中" />
             </Grid>
             <Button HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="8">

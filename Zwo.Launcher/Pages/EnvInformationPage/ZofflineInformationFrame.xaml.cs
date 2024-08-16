@@ -43,6 +43,7 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                 {
                     DispatcherQueue.TryEnqueue(async () =>
                     {
+                        LoadingProgressBar.ShowError = true;
                         ContentDialog dialog = new ContentDialog();
                         dialog.XamlRoot = this.XamlRoot;
                         dialog.Title = "出现错误";
@@ -57,16 +58,34 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                             package.SetText(ex.Message);
                             Clipboard.SetContent(package);
                         }
-                        LoadingProgressBar.ShowError = true;
                     });
                 }
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
+                    ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfos[0].TagName);
                     ZofflineVersionsDataGrid.ItemsSource = releaseInfos;
                     LoadingProgressBar.IsIndeterminate = false;
                 });
             }).Start();
+        }
+
+        private void DownloadSelectedButton_Click(object sender, RoutedEventArgs e)
+        {
+            int index = ZofflineVersionsDataGrid.SelectedIndex;
+            Debug.WriteLine($"Selected Index: {index}");
+            if (index != -1)
+            {
+                DownloadSelectedButton.IsEnabled = false;
+                DownloadStatusText.Text = "下载中";
+                LoadingProgressBar.IsIndeterminate = true;
+                new Thread(async () =>
+                {
+                    await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetReleaseInfos()[index], LoadingProgressBar);
+                    DownloadSelectedButton.DispatcherQueue.TryEnqueue(() => DownloadSelectedButton.IsEnabled = true);
+                    DownloadStatusText.DispatcherQueue.TryEnqueue(() => DownloadStatusText.Text = "");
+                }).Start();
+            }
         }
     }
 }

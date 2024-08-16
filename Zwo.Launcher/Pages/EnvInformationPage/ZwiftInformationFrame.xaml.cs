@@ -33,7 +33,7 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
 
             new Thread(() =>
             {
-                string zwiftKey = ZwiftManager.IsZwiftInstalled();
+                string zwiftKey = ZwiftManager.GetZwiftKey();
                 bool isZwiftInstalled = !string.IsNullOrEmpty(zwiftKey);
                 DispatcherQueue.TryEnqueue(() =>
                 {

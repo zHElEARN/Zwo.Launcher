@@ -16,7 +16,7 @@ namespace zlauncher.Zwift
         private static string _cachedVersion = null;
         private static string _cachedXmlVersion = null;
 
-        public static string IsZwiftInstalled()
+        public static string GetZwiftKey()
         {
             if (_cachedZwiftKey != null)
             {

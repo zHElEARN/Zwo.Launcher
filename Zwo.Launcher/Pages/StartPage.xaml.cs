@@ -10,8 +10,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using zlauncher.Zwift;
+using Zwo.Launcher.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +29,32 @@ namespace Zwo.Launcher.Pages
         public StartPage()
         {
             this.InitializeComponent();
+
+            new Thread(() =>
+            {
+                var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
+                var zofflineVersion = ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName);
+
+                var zwiftKey = ZwiftManager.GetZwiftKey();
+                var isZwiftInstalled = !string.IsNullOrEmpty(zwiftKey);
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (isZwiftInstalled)
+                    {
+                        var zwiftInstallLocation = ZwiftManager.GetInstallLocation(zwiftKey);
+                        var zwiftVersion = ZwiftManager.GetVersion(zwiftInstallLocation);
+
+                        ZwiftVersion.Text = zwiftVersion;
+                    }
+                    else
+                    {
+                        ZwiftVersion.Text = "Î´°²×°";
+                    }
+                    ZofflineVersion.Text = zofflineVersion;
+                    LoadingProgressBar.IsIndeterminate = false;
+                });
+            }).Start();
         }
     }
 }
