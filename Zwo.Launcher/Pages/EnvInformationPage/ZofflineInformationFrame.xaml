@@ -21,7 +21,7 @@
             <StackPanel Orientation="Vertical" Spacing="10">
                 <ProgressBar IsIndeterminate="True" x:Name="LoadingProgressBar" Value="100" />
 
-                <controls:DataGrid x:Name="ZofflineVersionsDataGrid" AutoGenerateColumns="False">
+                <controls:DataGrid x:Name="ZofflineVersionsDataGrid" AutoGenerateColumns="False" IsReadOnly="True">
                     <controls:DataGrid.Columns>
                         <controls:DataGridTemplateColumn Header="标签">
                             <controls:DataGridTemplateColumn.CellTemplate>

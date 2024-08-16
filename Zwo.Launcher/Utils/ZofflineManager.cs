@@ -31,7 +31,7 @@ namespace Zwo.Launcher.Utils
 
             var url = "https://api.github.com/repos/zoffline/zwift-offline/releases";
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; Crawler/1.0)");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible)");
 
             var response = httpClient.GetStringAsync(url).Result;
             var releases = JsonSerializer.Deserialize<List<JsonElement>>(response);
