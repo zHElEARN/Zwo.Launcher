@@ -7,9 +7,11 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -29,23 +31,33 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
         {
             this.InitializeComponent();
 
-            ZwiftManager.GetInstallLocation().ContinueWith(task =>
+            new Thread(() =>
             {
-                string zwiftInstallLocation = task.Result;
+                string zwiftKey = ZwiftManager.IsZwiftInstalled();
+                bool isZwiftInstalled = !string.IsNullOrEmpty(zwiftKey);
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (isZwiftInstalled)
+                    {
+                        string zwiftInstallLocation = ZwiftManager.GetInstallLocation(zwiftKey);
 
-                DispatcherQueue.TryEnqueue(async () => {
-                    bool isZwiftInstalled = await ZwiftManager.IsZwiftInstalled();
-
+                        ZwiftStatusText.Text = "已安装";
+                        ZwiftLocationText.Text = zwiftInstallLocation;
+                        ZwiftVersionText.Text = ZwiftManager.GetVersion(zwiftInstallLocation);
+                        DetailedVersionText.Text = ZwiftManager.GetXmlVersion(zwiftInstallLocation);
+                        DetailedVersionExpander.IsEnabled = true;
+                    }
+                    else
+                    {
+                        ZwiftProgressBar.ShowError = true;
+                        ZwiftStatusText.Text = "未安装";
+                        ZwiftLocationText.Text = "未安装";
+                        ZwiftVersionText.Text = "未安装";
+                        DetailedVersionText.Text = "未安装";
+                    }
                     ZwiftProgressBar.IsIndeterminate = false;
-                    ZwiftProgressBar.ShowError = !isZwiftInstalled;
-
-                    ZwiftStatusText.Text = isZwiftInstalled ? "已安装" : "未安装";
-                    ZwiftLocationText.Text = isZwiftInstalled ? zwiftInstallLocation : "未安装";
-                    ZwiftVersionText.Text = isZwiftInstalled ? await ZwiftManager.GetVersion() : "未安装";
-                    DetailedVersionText.Text = isZwiftInstalled ? await ZwiftManager.GetXmlVersion() : "未安装";
-                    DetailedVersionExpander.IsEnabled = isZwiftInstalled;
                 });
-            });
+            }).Start();
         }
 
         private void CopyDetailedButton_Click(object sender, RoutedEventArgs e)
