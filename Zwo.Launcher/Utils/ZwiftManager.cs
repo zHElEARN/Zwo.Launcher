@@ -11,10 +11,10 @@ namespace zlauncher.Zwift
 {
     static class ZwiftManager
     {
-        private static string _cachedZwiftKey;
-        private static string _cachedInstallLocation;
-        private static string _cachedVersion;
-        private static string _cachedXmlVersion;
+        private static string _cachedZwiftKey = null;
+        private static string _cachedInstallLocation = null;
+        private static string _cachedVersion = null;
+        private static string _cachedXmlVersion = null;
 
         public static string IsZwiftInstalled()
         {

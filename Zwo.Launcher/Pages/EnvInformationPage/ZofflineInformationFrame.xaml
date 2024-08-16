@@ -6,10 +6,43 @@
     xmlns:local="using:Zwo.Launcher.Pages.EnvInformationPage"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Margin="20" RowSpacing="10">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent"/>
+                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent"/>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <ProgressBar IsIndeterminate="True" x:Name="LoadingProgressBar" Value="100" />
 
+                <controls:DataGrid x:Name="ZofflineVersionsDataGrid" AutoGenerateColumns="False">
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTemplateColumn Header="标签">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <HyperlinkButton Content="{Binding TagName}" NavigateUri="{Binding HtmlUrl}" />
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTextColumn Header="Id" Binding="{Binding Id}" />
+                        <controls:DataGridTextColumn Header="名称" Binding="{Binding Name}" />
+                        <controls:DataGridTextColumn Header="发布时间" Binding="{Binding PublishedAt}" />
+                        <controls:DataGridTemplateColumn Header="当前">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsEnabled="False" Content="未安装" />
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
