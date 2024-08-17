@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Text;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,6 +30,61 @@ namespace Zwo.Launcher.Utils
 
         private static List<ReleaseInfo> _cachedReleaseInfos = null;
         private static ReleaseInfo _cachedLatestReleaseInfo = null;
+
+        public static async Task RunZofflineAsync(string version, RichEditBox outputBox)
+        {
+            string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
+            string exePath = Path.Combine(zofflineDirectory, $"zoffline_{version}.exe");
+
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = exePath,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+
+            var process = new Process
+            {
+                StartInfo = processStartInfo,
+                EnableRaisingEvents = true,
+            };
+
+            process.OutputDataReceived += (sender, args) =>
+            {
+                if (!string.IsNullOrEmpty(args.Data))
+                {
+                    outputBox.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        outputBox.IsReadOnly = false;
+                        outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
+                        outputBox.Document.Selection.Text = $"{args.Data}\n";
+                        outputBox.IsReadOnly = true;
+                    });
+                }
+            };
+
+            process.ErrorDataReceived += (sender, args) =>
+            {
+                if (!string.IsNullOrEmpty(args.Data))
+                {
+                    outputBox.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        outputBox.IsReadOnly = false;
+                        outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
+                        outputBox.Document.Selection.Text = $"{args.Data}\n";
+                        outputBox.IsReadOnly = true;
+                    });
+                }
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            await Task.Run(() => process.WaitForExit());
+        }
 
         public static int CompareVersions(string version1, string version2)
         {

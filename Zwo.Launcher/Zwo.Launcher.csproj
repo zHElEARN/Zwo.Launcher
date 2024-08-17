@@ -20,6 +20,7 @@
     <None Remove="Pages\EnvInformationPage\ZwiftInformationFrame.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
     <None Remove="Pages\StartPage.xaml" />
+    <None Remove="Pages\ZofflineLogPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +48,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\ZofflineLogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\EnvInformationPage\ZofflineInformationFrame.xaml">

@@ -33,11 +33,20 @@ namespace Zwo.Launcher
             this.SetTitleBar(AppTitleBar);
         }
 
+        public void Navigate(Type pageType, int index = -1, object parameter = null)
+        {
+            ContentFrame.Navigate(pageType, parameter);
+            if (index != -1)
+            {
+                NavView.SelectedItem = NavView.MenuItems[index];
+            }
+        }
+
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
             {
-                ContentFrame.Navigate(typeof(SettingsPage));
+                Navigate(typeof(SettingsPage));
             }
             else
             {
@@ -46,10 +55,13 @@ namespace Zwo.Launcher
                 switch (selectedTag)
                 {
                     case "Start":
-                        ContentFrame.Navigate(typeof(StartPage));
+                        Navigate(typeof(StartPage));
                         break;
                     case "EnvInformation":
-                        ContentFrame.Navigate(typeof(EnvInformationPage));
+                        Navigate(typeof(EnvInformationPage));
+                        break;
+                    case "ZofflineLog":
+                        Navigate(typeof(ZofflineLogPage));
                         break;
                 }
             }

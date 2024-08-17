@@ -63,8 +63,7 @@ namespace Zwo.Launcher.Pages
             var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
             var latestLocalVersion = ZofflineManager.GetLocalLatestVersion();
 
-            int comparison = ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion);
-            if (comparison > 0)
+            if (string.IsNullOrEmpty(latestLocalVersion) || ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0)
             {
                 VersionTeachingTip.IsOpen = true;
                 new Thread(() =>
@@ -77,7 +76,14 @@ namespace Zwo.Launcher.Pages
                 new Thread(async () =>
                 {
                     await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
+                    var mainWindow = (Application.Current as App)?.m_window as MainWindow;
+                    mainWindow.DispatcherQueue.TryEnqueue(() => mainWindow.Navigate(typeof(ZofflineLogPage), 3, ("start", latestLocalVersion)));
                 }).Start();
+            }
+            else
+            {
+                var mainWindow = (Application.Current as App)?.m_window as MainWindow;
+                mainWindow.Navigate(typeof(ZofflineLogPage), 3, ("start", latestLocalVersion));
             }
         }
     }
