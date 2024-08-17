@@ -6,10 +6,44 @@
     xmlns:local="using:Zwo.Launcher.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <ScrollView>
+        <StackPanel Spacing="4" Margin="20">
+            <controls:SettingsCard Header="配置模式" Description="自动下载并且使用最新版本 Zoffline，或者手动下载并选择特定版本 Zoffline">
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE90F;" />
+                </controls:SettingsCard.HeaderIcon>
+                <ComboBox SelectedIndex="0">
+                    <ComboBoxItem>自动配置</ComboBoxItem>
+                    <ComboBoxItem>手动配置</ComboBoxItem>
+                </ComboBox>
+            </controls:SettingsCard>
 
-    </Grid>
+            <controls:SettingsExpander
+                Header="代理配置"
+                Description="配置网络请求时的代理">
+                <controls:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xEDA3;" />
+                </controls:SettingsExpander.HeaderIcon>
+                <ToggleSwitch />
+                <controls:SettingsExpander.Items>
+                    <controls:SettingsCard Header="使用系统设置">
+                        <ToggleSwitch />
+                    </controls:SettingsCard>
+                    <controls:SettingsCard Header="代理服务器地址">
+                        <TextBox PlaceholderText="http://127.0.0.1:7890" />
+                    </controls:SettingsCard>
+                </controls:SettingsExpander.Items>
+            </controls:SettingsExpander>
+            <controls:SettingsCard Header="下载加速" Description="使用 mirror.ghproxy.com 加速">
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xEC4A;" />
+                </controls:SettingsCard.HeaderIcon>
+                <ToggleSwitch />
+            </controls:SettingsCard>
+        </StackPanel>
+    </ScrollView>
 </Page>
