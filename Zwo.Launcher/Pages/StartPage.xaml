@@ -28,9 +28,15 @@
                 <TextBlock x:Name="ZwiftVersion" Grid.Column="1" Grid.Row="1" Text="加载中" />
                 <TextBlock x:Name="ZofflineVersion" Grid.Column="1" Grid.Row="2" Text="加载中" />
             </Grid>
-            <Button HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TeachingTip x:Name="VersionTeachingTip" Target="{x:Bind StartButton}" Title="本地版本低于最新版本，正在下载最新版本">
+                <TeachingTip.IconSource>
+                    <FontIconSource Glyph="&#xE7BA;" />
+                </TeachingTip.IconSource>
+            </TeachingTip>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Center" Click="StartButton_Click" x:Name="StartButton">
                 <StackPanel Orientation="Horizontal" Margin="8">
                     <FontIcon Glyph="&#xF5B0;" FontSize="28" />
+                    
                     <TextBlock Margin="16,0,0,0" FontSize="28" Text="一键启动" />
                 </StackPanel>
             </Button>

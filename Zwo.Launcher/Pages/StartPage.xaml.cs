@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -55,6 +56,29 @@ namespace Zwo.Launcher.Pages
                     LoadingProgressBar.IsIndeterminate = false;
                 });
             }).Start();
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
+            var latestLocalVersion = ZofflineManager.GetLocalLatestVersion();
+
+            int comparison = ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion);
+            if (comparison > 0)
+            {
+                VersionTeachingTip.IsOpen = true;
+                new Thread(() =>
+                {
+                    Thread.Sleep(2000);
+                    VersionTeachingTip.DispatcherQueue.TryEnqueue(() => VersionTeachingTip.IsOpen = false);
+                }).Start();
+
+                LoadingProgressBar.IsIndeterminate = true;
+                new Thread(async () =>
+                {
+                    await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
+                }).Start();
+            }
         }
     }
 }

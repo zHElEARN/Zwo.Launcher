@@ -30,6 +30,30 @@ namespace Zwo.Launcher.Utils
         private static List<ReleaseInfo> _cachedReleaseInfos = null;
         private static ReleaseInfo _cachedLatestReleaseInfo = null;
 
+        public static int CompareVersions(string version1, string version2)
+        {
+            Version v1 = new Version(version1);
+            Version v2 = new Version(version2);
+
+            return v1.CompareTo(v2);
+        }
+
+        public static string GetLocalLatestVersion()
+        {
+            string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
+            var files = Directory.GetFiles(zofflineDirectory, "zoffline_*.exe");
+
+            Regex versionRegex = new Regex(@"zoffline_(\d+\.\d+\.\d+)\.exe");
+
+            var latestFile = files
+                .Select(file => versionRegex.Match(Path.GetFileName(file)).Groups[1].Value)
+                .Where(version => !string.IsNullOrEmpty(version))
+                .OrderByDescending(version => new Version(version))
+                .FirstOrDefault();
+
+            return latestFile;
+        }
+
         public static void MarkExistingZofflineFiles(List<ReleaseInfo> releaseInfos)
         {
             string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
@@ -41,7 +65,7 @@ namespace Zwo.Launcher.Utils
 
             var existingFiles = Directory.GetFiles(zofflineDirectory, "*.exe");
 
-            foreach (var releaseInfo in releaseInfos) 
+            foreach (var releaseInfo in releaseInfos)
             {
                 string expectedFileName = $"{releaseInfo.TagName}.exe";
                 string filePath = existingFiles.FirstOrDefault(f => Path.GetFileName(f) == expectedFileName);
@@ -171,7 +195,7 @@ namespace Zwo.Launcher.Utils
                     HtmlUrl = release.GetProperty("html_url").GetString(),
                     PublishedAt = release.GetProperty("published_at").GetDateTime(),
                     BrowserDownloadUrl = release.GetProperty("assets")[0].GetProperty("browser_download_url").GetString(),
-                Size = release.GetProperty("assets")[0].GetProperty("size").GetInt64()
+                    Size = release.GetProperty("assets")[0].GetProperty("size").GetInt64()
                 });
             }
 
