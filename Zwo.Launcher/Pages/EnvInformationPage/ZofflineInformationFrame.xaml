@@ -11,6 +11,10 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <local:BooleanToStringConverter x:Key="BooleanToStringConverter" TrueContent="已下载" FalseContent="未下载" />
+    </Page.Resources>
+
     <ScrollView>
         <Grid Margin="20" RowSpacing="10">
             <Grid.Resources>
@@ -30,8 +34,8 @@
                         <controls:SettingsCard Header="远程最新">
                             <TextBlock x:Name="ZofflineRemoteLatestText" />
                         </controls:SettingsCard>
-                        <controls:SettingsCard Header="本地最新">
-                            <TextBlock x:Name="ZofflineLocalLatestText" />
+                        <controls:SettingsCard Header="本地使用">
+                            <TextBlock x:Name="ZofflineLocalUsedText" />
                         </controls:SettingsCard>
                         <controls:SettingsCard Header="版本状态">
                             <TextBlock x:Name="ZofflineVersionStatusText" />
@@ -57,10 +61,13 @@
                         <ui_controls:DataGridTextColumn Header="名称" Binding="{Binding Name}" />
                         <ui_controls:DataGridTextColumn Header="发布时间" Binding="{Binding PublishedAt}" />
                         <ui_controls:DataGridTextColumn Header="文件大小" Binding="{Binding Size}" />
-                        <ui_controls:DataGridTemplateColumn Header="当前">
+                        <ui_controls:DataGridTemplateColumn Header="下载状态">
                             <ui_controls:DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsEnabled="False" Content="未安装" />
+                                    <CheckBox
+                                        IsEnabled="False"
+                                        IsChecked="{Binding IsExistingLocally}"
+                                        Content="{Binding IsExistingLocally, Converter={StaticResource BooleanToStringConverter}}" />
                                 </DataTemplate>
                             </ui_controls:DataGridTemplateColumn.CellTemplate>
                         </ui_controls:DataGridTemplateColumn>

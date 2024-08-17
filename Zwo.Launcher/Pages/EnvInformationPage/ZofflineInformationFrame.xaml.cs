@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -27,17 +28,17 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
     /// </summary>
     public sealed partial class ZofflineInformationFrame : Page
     {
+        private List<ZofflineManager.ReleaseInfo> releaseInfoList;
+
         public ZofflineInformationFrame()
         {
             this.InitializeComponent();
 
             new Thread(() =>
             {
-                List<ZofflineManager.ReleaseInfo> releaseInfos = null;
-
                 try
                 {
-                    releaseInfos = ZofflineManager.GetReleaseInfos();
+                    releaseInfoList = ZofflineManager.GetReleaseInfos();
                 }
                 catch (Exception ex)
                 {
@@ -61,10 +62,12 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                     });
                 }
 
+                ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
+
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfos[0].TagName);
-                    ZofflineVersionsDataGrid.ItemsSource = releaseInfos;
+                    ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfoList[0].TagName);
+                    ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
                     LoadingProgressBar.IsIndeterminate = false;
                 });
             }).Start();
@@ -73,7 +76,6 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
         private void DownloadSelectedButton_Click(object sender, RoutedEventArgs e)
         {
             int index = ZofflineVersionsDataGrid.SelectedIndex;
-            Debug.WriteLine($"Selected Index: {index}");
             if (index != -1)
             {
                 DownloadSelectedButton.IsEnabled = false;
@@ -81,11 +83,34 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                 LoadingProgressBar.IsIndeterminate = true;
                 new Thread(async () =>
                 {
-                    await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetReleaseInfos()[index], LoadingProgressBar);
-                    DownloadSelectedButton.DispatcherQueue.TryEnqueue(() => DownloadSelectedButton.IsEnabled = true);
-                    DownloadStatusText.DispatcherQueue.TryEnqueue(() => DownloadStatusText.Text = "");
+                    await ZofflineManager.DownloadZofflineAsync(releaseInfoList[index], LoadingProgressBar);
+                    ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
+
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        DownloadSelectedButton.IsEnabled = true;
+                        DownloadStatusText.Text = "";
+                        ZofflineVersionsDataGrid.ItemsSource = null;
+                        ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
+                    });
                 }).Start();
             }
+        }
+    }
+
+    public class BooleanToStringConverter : IValueConverter
+    {
+        public string TrueContent { get; set; }
+        public string FalseContent { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? TrueContent : FalseContent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
         }
     }
 }

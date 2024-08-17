@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -23,10 +24,38 @@ namespace Zwo.Launcher.Utils
             public DateTime PublishedAt { get; set; }
             public string BrowserDownloadUrl { get; set; }
             public long Size { get; set; }
+            public bool IsExistingLocally { get; set; } = false;
         }
 
         private static List<ReleaseInfo> _cachedReleaseInfos = null;
         private static ReleaseInfo _cachedLatestReleaseInfo = null;
+
+        public static void MarkExistingZofflineFiles(List<ReleaseInfo> releaseInfos)
+        {
+            string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
+
+            if (!Directory.Exists(zofflineDirectory))
+            {
+                return;
+            }
+
+            var existingFiles = Directory.GetFiles(zofflineDirectory, "*.exe");
+
+            foreach (var releaseInfo in releaseInfos) 
+            {
+                string expectedFileName = $"{releaseInfo.TagName}.exe";
+                string filePath = existingFiles.FirstOrDefault(f => Path.GetFileName(f) == expectedFileName);
+
+                if (filePath != null)
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    if (fileInfo.Length == releaseInfo.Size)
+                    {
+                        releaseInfo.IsExistingLocally = true;
+                    }
+                }
+            }
+        }
 
         public static async Task DownloadZofflineAsync(ReleaseInfo releaseInfo, ProgressBar progressBar)
         {
