@@ -38,10 +38,13 @@ namespace Zwo.Launcher.Utils
         {
             if (IsStarted) return;
 
-            outputBox.IsReadOnly = false;
-            outputBox.Document.Selection.SetRange(0, outputBox.Document.Selection.EndPosition);
-            outputBox.Document.Selection.Text = string.Empty;
-            outputBox.IsReadOnly = true;
+            outputBox.DispatcherQueue.TryEnqueue(() =>
+            {
+                outputBox.IsReadOnly = false;
+                outputBox.Document.Selection.SetRange(0, outputBox.Document.Selection.EndPosition);
+                outputBox.Document.Selection.Text = string.Empty;
+                outputBox.IsReadOnly = true;
+            });
 
             string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
             string exePath = Path.Combine(zofflineDirectory, $"zoffline_{version}.exe");

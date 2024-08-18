@@ -54,6 +54,35 @@ namespace Zwo.Launcher.Pages
         {
             if (!ZofflineManager.IsStarted)
             {
+                var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
+                var latestLocalVersion = ZofflineManager.GetLocalLatestVersion();
+
+                if (string.IsNullOrEmpty(latestLocalVersion) || ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0)
+                {
+                    LoadingProgressBar.IsIndeterminate = true;
+                    ProcessStatusText.Text = "正在下载最新版本 zoffline";
+                    new Thread(async () =>
+                    {
+                        await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
+
+                        ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
+
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            ProcessStatusText.Text = "运行中";
+                            StartButton.IsEnabled = false;
+                            StopButton.IsEnabled = true;
+                        });
+                    }).Start();
+                }
+                else
+                {
+                    ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
+
+                    ProcessStatusText.Text = "运行中";
+                    StartButton.IsEnabled = false;
+                    StopButton.IsEnabled = true;
+                }
             }
         }
 
