@@ -31,8 +31,18 @@ namespace Zwo.Launcher.Utils
         private static List<ReleaseInfo> _cachedReleaseInfos = null;
         private static ReleaseInfo _cachedLatestReleaseInfo = null;
 
-        public static async Task RunZofflineAsync(string version, RichEditBox outputBox)
+        public static bool IsStarted { get; private set; } = false;
+        private static Process _zofflineProcess;
+
+        public static void RunZoffline(string version, RichEditBox outputBox)
         {
+            if (IsStarted) return;
+
+            outputBox.IsReadOnly = false;
+            outputBox.Document.Selection.SetRange(0, outputBox.Document.Selection.EndPosition);
+            outputBox.Document.Selection.Text = string.Empty;
+            outputBox.IsReadOnly = true;
+
             string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
             string exePath = Path.Combine(zofflineDirectory, $"zoffline_{version}.exe");
 
@@ -45,13 +55,13 @@ namespace Zwo.Launcher.Utils
                 CreateNoWindow = true,
             };
 
-            var process = new Process
+            _zofflineProcess = new Process
             {
                 StartInfo = processStartInfo,
                 EnableRaisingEvents = true,
             };
 
-            process.OutputDataReceived += (sender, args) =>
+            _zofflineProcess.OutputDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
@@ -65,7 +75,7 @@ namespace Zwo.Launcher.Utils
                 }
             };
 
-            process.ErrorDataReceived += (sender, args) =>
+            _zofflineProcess.ErrorDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
@@ -79,11 +89,52 @@ namespace Zwo.Launcher.Utils
                 }
             };
 
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            _zofflineProcess.Exited += (sender, args) =>
+            {
+                IsStarted = false;
 
-            await Task.Run(() => process.WaitForExit());
+                int exitCode = _zofflineProcess.ExitCode;
+
+                outputBox.DispatcherQueue.TryEnqueue(() =>
+                {
+                    outputBox.IsReadOnly = false;
+                    outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
+                    outputBox.Document.Selection.Text = $"[zoffline 程序退出，代码为 {exitCode}]\n";
+                    outputBox.IsReadOnly = true;
+                });
+                _zofflineProcess.Dispose();
+                _zofflineProcess = null;
+            };
+
+            _zofflineProcess.Start();
+            _zofflineProcess.BeginOutputReadLine();
+            _zofflineProcess.BeginErrorReadLine();
+            IsStarted = true;
+
+            return;
+        }
+
+        public static void StopZoffline()
+        {
+            if (!IsStarted || _zofflineProcess == null) return;
+
+            string zofflineProcessName = _zofflineProcess.ProcessName;
+
+            if (!_zofflineProcess.HasExited)
+            {
+                _zofflineProcess.Kill(true);
+            }
+
+            Process[] processes = Process.GetProcesses();
+            foreach (Process process in processes)
+            {
+                string processName = process.ProcessName;
+                if (string.Equals(processName, zofflineProcessName, StringComparison.OrdinalIgnoreCase))
+                {
+                    process.Kill();
+                    process.WaitForExit();
+                }
+            }
         }
 
         public static int CompareVersions(string version1, string version2)

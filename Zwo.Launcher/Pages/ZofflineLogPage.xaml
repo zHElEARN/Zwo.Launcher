@@ -10,7 +10,28 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     NavigationCacheMode="Required">
 
-    <Grid Margin="20">
-        <RichEditBox x:Name="LogRichEditBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsReadOnly="True" />
+    <Grid RowSpacing="10" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="ProcessStatusText" Text="未运行" Grid.Row="0" HorizontalAlignment="Left" FontSize="20" Margin="10,0,0,0" />
+        <Grid Grid.Row="0" ColumnDefinitions="*,*"  HorizontalAlignment="Right" ColumnSpacing="8">
+            <Button Grid.Column="0" Click="StopButton_Click" IsEnabled="False" x:Name="StopButton">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE71A;" />
+                    <TextBlock Text="终止进程" />
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Click="StartButton_Click" IsEnabled="True" x:Name="StartButton">
+                <StackPanel Orientation="Horizontal" Spacing="18">
+                    <FontIcon Glyph="&#xE768;" />
+                    <TextBlock Text="一键启动" />
+                </StackPanel>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="1">
+            <RichEditBox x:Name="LogRichEditBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsReadOnly="True" />
+        </Grid>
     </Grid>
 </Page>

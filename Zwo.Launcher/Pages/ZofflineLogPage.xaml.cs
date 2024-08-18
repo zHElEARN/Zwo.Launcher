@@ -26,8 +26,6 @@ namespace Zwo.Launcher.Pages
     /// </summary>
     public sealed partial class ZofflineLogPage : Page
     {
-        private bool IsStarted = false;
-
         public ZofflineLogPage()
         {
             this.InitializeComponent();
@@ -40,15 +38,34 @@ namespace Zwo.Launcher.Pages
             {
                 if (message.Item1 == "start")
                 {
-                    if (!IsStarted)
+                    if (!ZofflineManager.IsStarted)
                     {
-                        IsStarted = true;
-                        new Thread(async () =>
-                        {
-                            await ZofflineManager.RunZofflineAsync(message.Item2, LogRichEditBox);
-                        }).Start();
+                        ZofflineManager.RunZoffline(message.Item2, LogRichEditBox);
+
+                        ProcessStatusText.Text = "运行中";
+                        StartButton.IsEnabled = false;
+                        StopButton.IsEnabled = true;
                     }
                 }
+            }
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ZofflineManager.IsStarted)
+            {
+            }
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ZofflineManager.IsStarted)
+            {
+                ZofflineManager.StopZoffline();
+
+                ProcessStatusText.Text = "未运行";
+                StartButton.IsEnabled = true;
+                StopButton.IsEnabled = false;
             }
         }
     }

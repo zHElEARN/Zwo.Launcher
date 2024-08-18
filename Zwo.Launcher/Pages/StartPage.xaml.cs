@@ -56,6 +56,11 @@ namespace Zwo.Launcher.Pages
                     LoadingProgressBar.IsIndeterminate = false;
                 });
             }).Start();
+
+            if (ZofflineManager.IsStarted)
+            {
+                StartButton.IsEnabled = false;
+            }
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
