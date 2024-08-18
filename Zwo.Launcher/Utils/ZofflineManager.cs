@@ -219,7 +219,7 @@ namespace Zwo.Launcher.Utils
             long totalRead = 0;
             int bytesRead;
 
-            progressBar.DispatcherQueue.TryEnqueue(() => progressBar.IsIndeterminate = false);
+            progressBar.IsIndeterminate = false;
 
             while ((bytesRead = await contentStream.ReadAsync(buffer.AsMemory(0, buffer.Length))) != 0)
             {
@@ -229,19 +229,13 @@ namespace Zwo.Launcher.Utils
                 if (totalBytes != -1 && progressBar != null)
                 {
                     double progress = (double)totalRead / totalBytes * 100;
-                    progressBar.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        progressBar.Value = progress;
-                    });
+                    progressBar.Value = progress;
                 }
             }
 
             if (progressBar != null)
             {
-                progressBar.DispatcherQueue.TryEnqueue(() =>
-                {
-                    progressBar.Value = 100;
-                });
+                progressBar.Value = 100;
             }
         }
 
@@ -280,7 +274,7 @@ namespace Zwo.Launcher.Utils
             return _cachedLatestReleaseInfo;
         }
 
-        public static List<ReleaseInfo> GetReleaseInfos()
+        public static async Task<List<ReleaseInfo>> GetReleaseInfosAsync()
         {
             if (_cachedReleaseInfos != null)
             {
@@ -291,7 +285,7 @@ namespace Zwo.Launcher.Utils
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible)");
 
-            var response = httpClient.GetStringAsync(url).Result;
+            var response = await httpClient.GetStringAsync(url);
             var releases = JsonSerializer.Deserialize<List<JsonElement>>(response);
             var releaseInfos = new List<ReleaseInfo>();
 

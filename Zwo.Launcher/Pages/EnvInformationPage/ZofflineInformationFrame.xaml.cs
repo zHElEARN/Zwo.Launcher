@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -34,46 +35,46 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
         {
             this.InitializeComponent();
 
-            new Thread(() =>
+            Task.Run(async () =>
             {
                 try
                 {
-                    releaseInfoList = ZofflineManager.GetReleaseInfos();
+                    releaseInfoList = await ZofflineManager.GetReleaseInfosAsync();
                 }
                 catch (Exception ex)
                 {
                     DispatcherQueue.TryEnqueue(async () =>
-                    {
-                        LoadingProgressBar.ShowError = true;
-                        ContentDialog dialog = new ContentDialog();
-                        dialog.XamlRoot = this.XamlRoot;
-                        dialog.Title = "出现错误";
-                        dialog.PrimaryButtonText = "复制信息并关闭";
-                        dialog.CloseButtonText = "关闭";
-                        dialog.Content = ex.Message;
+                   {
+                         LoadingProgressBar.ShowError = true;
+                         ContentDialog dialog = new ContentDialog();
+                         dialog.XamlRoot = this.XamlRoot;
+                         dialog.Title = "出现错误";
+                         dialog.PrimaryButtonText = "复制信息并关闭";
+                         dialog.CloseButtonText = "关闭";
+                         dialog.Content = ex.Message;
 
-                        var result = await dialog.ShowAsync();
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            var package = new DataPackage();
-                            package.SetText(ex.Message);
-                            Clipboard.SetContent(package);
-                        }
-                    });
+                         var result = await dialog.ShowAsync();
+                         if (result == ContentDialogResult.Primary)
+                         {
+                             var package = new DataPackage();
+                             package.SetText(ex.Message);
+                             Clipboard.SetContent(package);
+                         }
+                     });
                 }
 
                 ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
 
                 DispatcherQueue.TryEnqueue(() =>
-                {
-                    ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfoList[0].TagName);
-                    ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
-                    LoadingProgressBar.IsIndeterminate = false;
-                });
-            }).Start();
+               {
+                     ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfoList[0].TagName);
+                     ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
+                     LoadingProgressBar.IsIndeterminate = false;
+                 });
+            });
         }
 
-        private void DownloadSelectedButton_Click(object sender, RoutedEventArgs e)
+        private async void DownloadSelectedButton_Click(object sender, RoutedEventArgs e)
         {
             int index = ZofflineVersionsDataGrid.SelectedIndex;
             if (index != -1)
@@ -81,19 +82,16 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                 DownloadSelectedButton.IsEnabled = false;
                 DownloadStatusText.Text = "下载中";
                 LoadingProgressBar.IsIndeterminate = true;
-                new Thread(async () =>
-                {
-                    await ZofflineManager.DownloadZofflineAsync(releaseInfoList[index], LoadingProgressBar);
-                    ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
+                await ZofflineManager.DownloadZofflineAsync(releaseInfoList[index], LoadingProgressBar);
+                ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
 
-                    DispatcherQueue.TryEnqueue(() =>
-                    {
-                        DownloadSelectedButton.IsEnabled = true;
-                        DownloadStatusText.Text = "";
-                        ZofflineVersionsDataGrid.ItemsSource = null;
-                        ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
-                    });
-                }).Start();
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    DownloadSelectedButton.IsEnabled = true;
+                    DownloadStatusText.Text = "";
+                    ZofflineVersionsDataGrid.ItemsSource = null;
+                    ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
+                });
             }
         }
     }

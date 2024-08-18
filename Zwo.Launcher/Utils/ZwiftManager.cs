@@ -16,27 +16,31 @@ namespace zlauncher.Zwift
         private static string _cachedVersion = null;
         private static string _cachedXmlVersion = null;
 
-        public static string GetZwiftKey()
+        public static async Task<string> GetZwiftKeyAsync()
         {
             if (_cachedZwiftKey != null)
             {
                 return _cachedZwiftKey;
             }
 
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = "/c reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall /s";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-
             StringBuilder output = new StringBuilder();
-            while (!process.StandardOutput.EndOfStream)
+
+            await Task.Run(() =>
             {
-                output.AppendLine(process.StandardOutput.ReadLine());
-            }
-            process.WaitForExit();
+                Process process = new Process();
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = "/c reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall /s";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    output.AppendLine(process.StandardOutput.ReadLine());
+                }
+                process.WaitForExit();
+            });
 
             string[] lines = output.ToString().Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             string zwiftKey = null;
@@ -62,27 +66,31 @@ namespace zlauncher.Zwift
             return _cachedZwiftKey;
         }
 
-        public static string GetInstallLocation(string zwiftKey)
+        public static async Task<string> GetInstallLocationAsync(string zwiftKey)
         {
             if (_cachedInstallLocation != null)
             {
                 return _cachedInstallLocation;
             }
 
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/c reg query \"{zwiftKey}\" /v InstallLocation";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-
             StringBuilder output = new StringBuilder();
-            while (!process.StandardOutput.EndOfStream)
+
+            await Task.Run(() =>
             {
-                output.AppendLine(process.StandardOutput.ReadLine());
-            }
-            process.WaitForExit();
+                Process process = new Process();
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = $"/c reg query \"{zwiftKey}\" /v InstallLocation";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    output.AppendLine(process.StandardOutput.ReadLine());
+                }
+                process.WaitForExit();
+            });
 
             string result = output.ToString();
             int index = result.IndexOf("REG_SZ", StringComparison.OrdinalIgnoreCase);

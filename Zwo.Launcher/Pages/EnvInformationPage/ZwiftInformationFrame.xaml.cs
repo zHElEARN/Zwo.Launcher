@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -31,15 +32,15 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
         {
             this.InitializeComponent();
 
-            new Thread(() =>
+            Task.Run(async () =>
             {
-                string zwiftKey = ZwiftManager.GetZwiftKey();
+                string zwiftKey = await ZwiftManager.GetZwiftKeyAsync();
                 bool isZwiftInstalled = !string.IsNullOrEmpty(zwiftKey);
-                DispatcherQueue.TryEnqueue(() =>
+                DispatcherQueue.TryEnqueue(async () =>
                 {
                     if (isZwiftInstalled)
                     {
-                        string zwiftInstallLocation = ZwiftManager.GetInstallLocation(zwiftKey);
+                        string zwiftInstallLocation = await ZwiftManager.GetInstallLocationAsync(zwiftKey);
 
                         ZwiftStatusText.Text = "ÒÑ°²×°";
                         ZwiftLocationText.Text = zwiftInstallLocation;
@@ -57,7 +58,7 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                     }
                     ZwiftProgressBar.IsIndeterminate = false;
                 });
-            }).Start();
+            });
         }
 
         private void CopyDetailedButton_Click(object sender, RoutedEventArgs e)
