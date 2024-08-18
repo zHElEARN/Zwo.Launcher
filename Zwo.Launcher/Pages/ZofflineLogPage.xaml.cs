@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Zwo.Launcher.Utils;
@@ -31,68 +32,56 @@ namespace Zwo.Launcher.Pages
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is ValueTuple<string, string> message)
+            if (e.Parameter is ValueTuple<string, string> message && message.Item1 == "start")
             {
-                if (message.Item1 == "start")
-                {
-                    if (!ZofflineManager.IsStarted)
-                    {
-                        ZofflineManager.RunZoffline(message.Item2, LogRichEditBox);
-
-                        ProcessStatusText.Text = "运行中";
-                        StartButton.IsEnabled = false;
-                        StopButton.IsEnabled = true;
-                    }
-                }
+                await StartZofflineAsync(message.Item2);
             }
         }
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            await StartZofflineAsync("latest");
+        }
+
+        private async Task StartZofflineAsync(string version)
+        {
             if (!ZofflineManager.IsStarted)
             {
-                var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
-                var latestLocalVersion = ZofflineManager.GetLocalLatestVersion();
+                string latestLocalVersion = version;
 
-                if (string.IsNullOrEmpty(latestLocalVersion) || ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0)
+                if (version == "latest")
                 {
-                    LoadingProgressBar.IsIndeterminate = true;
-                    ProcessStatusText.Text = "正在下载最新版本 zoffline";
-                    await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
-
-                    ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
-
-                    DispatcherQueue.TryEnqueue(() =>
+                    if (ZofflineManager.ShouldDownloadLatestVersion(out latestLocalVersion))
                     {
-                        ProcessStatusText.Text = "运行中";
-                        StartButton.IsEnabled = false;
-                        StopButton.IsEnabled = true;
-                    });
+                        UpdateUI("正在下载最新版本 zoffline", true);
+                        await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetLatestReleaseInfo(), LoadingProgressBar);
+                    }
                 }
-                else
-                {
-                    ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
-
-                    ProcessStatusText.Text = "运行中";
-                    StartButton.IsEnabled = false;
-                    StopButton.IsEnabled = true;
-                }
+                ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
+                UpdateUI("运行中", false, true);
             }
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ZofflineManager.IsStarted)
-            {
-                ZofflineManager.StopZoffline();
+            StopZoffline();
+        }
 
-                ProcessStatusText.Text = "未运行";
-                StartButton.IsEnabled = true;
-                StopButton.IsEnabled = false;
-            }
+        private void StopZoffline()
+        {
+            ZofflineManager.StopZoffline();
+            UpdateUI("未运行", false, false);
+        }
+
+        private void UpdateUI(string status, bool isProgressBarIndeterminate, bool enableStopButton = false)
+        {
+            ProcessStatusText.Text = status;
+            LoadingProgressBar.IsIndeterminate = isProgressBarIndeterminate;
+            StartButton.IsEnabled = !enableStopButton;
+            StopButton.IsEnabled = enableStopButton;
         }
     }
 }

@@ -35,9 +35,8 @@
             </TeachingTip>
             <Button HorizontalAlignment="Right" VerticalAlignment="Center" Click="StartButton_Click" x:Name="StartButton">
                 <StackPanel Orientation="Horizontal" Margin="8">
-                    <FontIcon Glyph="&#xF5B0;" FontSize="28" />
-                    
-                    <TextBlock Margin="16,0,0,0" FontSize="28" Text="一键启动" />
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE768;" FontSize="28" x:Name="StartButtonFontIcon" />
+                    <TextBlock VerticalAlignment="Center" Margin="16,0,0,0" FontSize="28" Text="一键启动" x:Name="StartButtonText" />
                 </StackPanel>
             </Button>
         </Grid>

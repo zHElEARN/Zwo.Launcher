@@ -60,26 +60,15 @@ namespace Zwo.Launcher.Pages
 
             if (ZofflineManager.IsStarted)
             {
-                StartButton.IsEnabled = false;
+                StartButtonText.Text = "正在运行";
+                StartButtonFontIcon.Glyph = "\uF0AF";
             }
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
-            var latestLocalVersion = ZofflineManager.GetLocalLatestVersion();
-
-            if (string.IsNullOrEmpty(latestLocalVersion) || ZofflineManager.CompareVersions(ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0)
-            {
-                VersionTeachingTip.IsOpen = true;
-                await Task.Delay(2000);
-                VersionTeachingTip.IsOpen = false;
-
-                LoadingProgressBar.IsIndeterminate = true;
-                await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
-            }
             var mainWindow = (Application.Current as App)?.m_window as MainWindow;
-            mainWindow.Navigate(typeof(ZofflineLogPage), 3, ("start", latestLocalVersion));
+            mainWindow.Navigate(typeof(ZofflineLogPage), 3, ZofflineManager.IsStarted ? null : ("start", "latest"));
         }
     }
 }

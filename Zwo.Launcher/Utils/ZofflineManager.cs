@@ -34,6 +34,25 @@ namespace Zwo.Launcher.Utils
         public static bool IsStarted { get; private set; } = false;
         private static Process _zofflineProcess;
 
+        private static void AppendTextToOutputBox(RichEditBox outputBox, string text)
+        {
+            outputBox.DispatcherQueue.TryEnqueue(() =>
+            {
+                outputBox.IsReadOnly = false;
+                outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
+                outputBox.Document.Selection.Text = $"{text}\n";
+                outputBox.IsReadOnly = true;
+            });
+        }
+
+        public static bool ShouldDownloadLatestVersion(out string latestLocalVersion)
+        {
+            var latestReleaseInfo = GetLatestReleaseInfo();
+            latestLocalVersion = GetLocalLatestVersion();
+
+            return string.IsNullOrEmpty(latestLocalVersion) || CompareVersions(ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0;
+        }
+
         public static void RunZoffline(string version, RichEditBox outputBox)
         {
             if (IsStarted) return;
@@ -68,13 +87,7 @@ namespace Zwo.Launcher.Utils
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
-                    outputBox.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        outputBox.IsReadOnly = false;
-                        outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
-                        outputBox.Document.Selection.Text = $"{args.Data}\n";
-                        outputBox.IsReadOnly = true;
-                    });
+                    AppendTextToOutputBox(outputBox, args.Data);
                 }
             };
 
@@ -82,13 +95,7 @@ namespace Zwo.Launcher.Utils
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
-                    outputBox.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        outputBox.IsReadOnly = false;
-                        outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
-                        outputBox.Document.Selection.Text = $"{args.Data}\n";
-                        outputBox.IsReadOnly = true;
-                    });
+                    AppendTextToOutputBox(outputBox, args.Data);
                 }
             };
 
@@ -97,14 +104,8 @@ namespace Zwo.Launcher.Utils
                 IsStarted = false;
 
                 int exitCode = _zofflineProcess.ExitCode;
+                AppendTextToOutputBox(outputBox, $"[zoffline 程序退出，代码为 {exitCode}]\n");
 
-                outputBox.DispatcherQueue.TryEnqueue(() =>
-                {
-                    outputBox.IsReadOnly = false;
-                    outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
-                    outputBox.Document.Selection.Text = $"[zoffline 程序退出，代码为 {exitCode}]\n";
-                    outputBox.IsReadOnly = true;
-                });
                 _zofflineProcess.Dispose();
                 _zofflineProcess = null;
             };
