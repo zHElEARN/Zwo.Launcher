@@ -5,11 +5,11 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -42,11 +42,21 @@ namespace Zwo.Launcher
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string folderPath = System.IO.Path.Combine(basePath, ".zlauncher");
+            string folderPath = Path.Combine(basePath, ".zlauncher");
 
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
+            }
+
+            var assembly = Assembly.GetExecutingAssembly();
+            using (Stream stream = assembly.GetManifestResourceStream("Zwo.Launcher.Assets.configure_client.bat"))
+            {
+                string outputFilePath = Path.Combine(folderPath, "configure_client.bat");
+                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
+                {
+                    stream.CopyTo(fileStream);
+                }
             }
 
             m_window = new MainWindow();
