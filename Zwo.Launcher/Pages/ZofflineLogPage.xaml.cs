@@ -28,6 +28,8 @@ namespace Zwo.Launcher.Pages
     /// </summary>
     public sealed partial class ZofflineLogPage : Page
     {
+        private HostsManager.HostsEntry zwiftHostsEntry = new HostsManager.HostsEntry("127.0.0.1", new List<string> { "us-or-rly101.zwift.com", "secure.zwift.com", "cdn.zwift.com", "launcher.zwift.com" });
+
         public ZofflineLogPage()
         {
             this.InitializeComponent();
@@ -61,6 +63,7 @@ namespace Zwo.Launcher.Pages
                         await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetLatestReleaseInfo(), LoadingProgressBar);
                     }
                 }
+                HostsManager.AddEntry(zwiftHostsEntry);
                 await ConfigureClient.RunConfigureClientAsync(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
                 ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
                 UpdateUI("运行中", false, true);
@@ -75,6 +78,7 @@ namespace Zwo.Launcher.Pages
         private void StopZoffline()
         {
             ZofflineManager.StopZoffline();
+            HostsManager.RemoveAllEntries();
             UpdateUI("未运行", false, false);
         }
 
