@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using zlauncher.Zwift;
 using Zwo.Launcher.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -60,6 +61,7 @@ namespace Zwo.Launcher.Pages
                         await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetLatestReleaseInfo(), LoadingProgressBar);
                     }
                 }
+                await ConfigureClient.RunConfigureClientAsync(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
                 ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
                 UpdateUI("ÔËÐÐÖÐ", false, true);
             }

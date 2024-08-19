@@ -1,15 +1,14 @@
 @ECHO OFF
-TITLE configure_client
-ECHO Configuring Zwift client to use zoffline
-ECHO.
 
-NET SESSION >nul 2>&1 || ( PowerShell start -verb runas '%~0' & EXIT /B )
+:: NET SESSION >nul 2>&1 || ( PowerShell start -verb runas '%~0' & EXIT /B )
 
-SET HOSTS="%WINDIR%\system32\drivers\etc\hosts"
-COPY %HOSTS% %HOSTS%.bak >nul
-TYPE %HOSTS%.bak | FINDSTR /V /I zwift > %HOSTS%
-ECHO Adding servers to hosts file
-ECHO 127.0.0.1 us-or-rly101.zwift.com secure.zwift.com cdn.zwift.com launcher.zwift.com>>%HOSTS%
+CD /D "%~dp0"
+
+:: SET HOSTS="%WINDIR%\system32\drivers\etc\hosts"
+:: COPY %HOSTS% %HOSTS%.bak >nul
+:: TYPE %HOSTS%.bak | FINDSTR /V /I zwift > %HOSTS%
+:: ECHO Adding servers to hosts file
+:: ECHO 127.0.0.1 us-or-rly101.zwift.com secure.zwift.com cdn.zwift.com launcher.zwift.com>>%HOSTS%
 
 ECHO.
 
@@ -85,20 +84,11 @@ IF %ERRORLEVEL% NEQ 0 (
     DEL cert-zwift-com.p12
 ) ELSE ( ECHO Certificate found in root store, no changes will be made )
 
-ECHO.
+:: ECHO.
 
-SET ZWIFT=zwift_location.txt
-IF EXIST %ZWIFT% ( SET /P FOLDER=<%ZWIFT%
-) ELSE ( SET FOLDER="%SystemDrive%\Program Files (x86)\Zwift")
+SET FOLDER=%1
 SET CACERT=%FOLDER%\data\cacert.pem
-IF EXIST %CACERT% GOTO:FOUND
-:NOT_FOUND
-SET COMMAND="(new-object -COM 'Shell.Application').BrowseForFolder(0,'Please locate Zwift folder',0,0).self.path"
-FOR /F "usebackq delims=" %%I IN (`PowerShell %COMMAND%`) DO SET FOLDER="%%I"
-SET CACERT=%FOLDER%\data\cacert.pem
-IF NOT EXIST %CACERT% GOTO:NOT_FOUND
-ECHO %FOLDER%>%ZWIFT%
-:FOUND
+
 >nul 2>&1 FIND /C "MIIEQTCCAymgAwIBAgIUVPfyk0BzcKB2eYhXZ+W9WZRY5HEwDQYJKoZIhvcNAQEL" %CACERT%
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Adding certificate to cacert.pem
@@ -160,8 +150,4 @@ IF %ERRORLEVEL% NEQ 0 (
     )>>%CACERT%
 ) ELSE ( ECHO Certificate found in cacert.pem, no changes will be made )
 
-ECHO.
-
-TASKKILL /F /IM ZwiftLauncher.exe >nul 2>&1
-
-PAUSE
+:: ECHO.
