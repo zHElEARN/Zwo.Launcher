@@ -59,8 +59,11 @@ namespace Zwo.Launcher.Pages
                 {
                     if (ZofflineManager.ShouldDownloadLatestVersion(out latestLocalVersion))
                     {
+                        var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
+                        latestLocalVersion = ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName);
+
                         UpdateUI("正在下载最新版本 zoffline", true);
-                        await ZofflineManager.DownloadZofflineAsync(ZofflineManager.GetLatestReleaseInfo(), LoadingProgressBar);
+                        await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
                     }
                 }
                 HostsManager.AddEntry(zwiftHostsEntry);

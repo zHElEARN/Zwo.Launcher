@@ -43,10 +43,16 @@ namespace Zwo.Launcher
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string folderPath = Path.Combine(basePath, ".zlauncher");
+            string zofflinePath = Path.Combine(folderPath, "zoffline");
 
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
+            }
+
+            if (!Directory.Exists(zofflinePath))
+            {
+                Directory.CreateDirectory(zofflinePath);
             }
 
             var assembly = Assembly.GetExecutingAssembly();
