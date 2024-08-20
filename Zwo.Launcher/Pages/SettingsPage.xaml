@@ -16,9 +16,9 @@
                 <controls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE90F;" />
                 </controls:SettingsCard.HeaderIcon>
-                <ComboBox SelectedIndex="0">
+                <ComboBox SelectedIndex="0" x:Name="ConfigurationModeComboBox">
                     <ComboBoxItem>自动配置</ComboBoxItem>
-                    <ComboBoxItem>手动配置</ComboBoxItem>
+                    <ComboBoxItem IsEnabled="False">手动配置</ComboBoxItem>
                 </ComboBox>
             </controls:SettingsCard>
 
@@ -28,13 +28,13 @@
                 <controls:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xEDA3;" />
                 </controls:SettingsExpander.HeaderIcon>
-                <ToggleSwitch />
+                <ToggleSwitch x:Name="ProxySettingsToggleSwitch" />
                 <controls:SettingsExpander.Items>
                     <controls:SettingsCard Header="使用系统设置">
-                        <ToggleSwitch />
+                        <ToggleSwitch x:Name="UseSystemSettingsToggleSwitch" />
                     </controls:SettingsCard>
                     <controls:SettingsCard Header="代理服务器地址">
-                        <TextBox PlaceholderText="http://127.0.0.1:7890" />
+                        <TextBox x:Name="ProxyServerAddressTextBox" PlaceholderText="http://127.0.0.1:7890" />
                     </controls:SettingsCard>
                 </controls:SettingsExpander.Items>
             </controls:SettingsExpander>
@@ -42,7 +42,7 @@
                 <controls:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xEC4A;" />
                 </controls:SettingsCard.HeaderIcon>
-                <ToggleSwitch />
+                <ToggleSwitch IsOn="True" x:Name="DownloadAccelerationToggleSwitch" />
             </controls:SettingsCard>
         </StackPanel>
     </ScrollView>
