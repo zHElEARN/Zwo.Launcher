@@ -48,9 +48,12 @@ namespace Zwo.Launcher.Utils
         public static bool ShouldDownloadLatestVersion(out string latestLocalVersion)
         {
             var latestReleaseInfo = GetLatestReleaseInfo();
-            latestLocalVersion = GetLocalLatestVersion();
+            (latestLocalVersion, var fileSize) = GetLocalLatestVersion();
 
-            return string.IsNullOrEmpty(latestLocalVersion) || CompareVersions(ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0;
+            return
+                string.IsNullOrEmpty(latestLocalVersion) ||
+                CompareVersions(ParseZofflineVersion(latestReleaseInfo.TagName), latestLocalVersion) > 0 ||
+                fileSize != latestReleaseInfo.Size;
         }
 
         public static void RunZoffline(string version, RichEditBox outputBox)
@@ -149,7 +152,7 @@ namespace Zwo.Launcher.Utils
             return v1.CompareTo(v2);
         }
 
-        public static string GetLocalLatestVersion()
+        public static (string, long) GetLocalLatestVersion()
         {
             string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
             var files = Directory.GetFiles(zofflineDirectory, "zoffline_*.exe");
@@ -157,12 +160,22 @@ namespace Zwo.Launcher.Utils
             Regex versionRegex = new Regex(@"zoffline_(\d+\.\d+\.\d+)\.exe");
 
             var latestFile = files
-                .Select(file => versionRegex.Match(Path.GetFileName(file)).Groups[1].Value)
-                .Where(version => !string.IsNullOrEmpty(version))
-                .OrderByDescending(version => new Version(version))
+                .Select(file => new
+                {
+                    Version = versionRegex.Match(Path.GetFileName(file)).Groups[1].Value,
+                    FilePath = file,
+                })
+                .Where(x => !string.IsNullOrEmpty(x.Version))
+                .OrderByDescending(x => new Version(x.Version))
                 .FirstOrDefault();
 
-            return latestFile;
+            if (latestFile == null)
+            {
+                return (null, 0);
+            }
+
+            long fileSize = new FileInfo(latestFile.FilePath).Length;
+            return (latestFile.Version, fileSize);
         }
 
         public static void MarkExistingZofflineFiles(List<ReleaseInfo> releaseInfos)

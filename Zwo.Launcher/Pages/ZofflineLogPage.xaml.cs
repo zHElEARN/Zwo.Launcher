@@ -62,14 +62,14 @@ namespace Zwo.Launcher.Pages
                         var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
                         latestLocalVersion = ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName);
 
-                        UpdateUI("正在下载最新版本 zoffline", true);
+                        UpdateUI("正在下载最新版本 zoffline", true, false, false);
                         await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
                     }
                 }
                 HostsManager.AddEntry(zwiftHostsEntry);
                 await ConfigureClient.RunConfigureClientAsync(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
                 ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
-                UpdateUI("运行中", false, true);
+                UpdateUI("运行中", false, false, true);
             }
         }
 
@@ -82,14 +82,14 @@ namespace Zwo.Launcher.Pages
         {
             ZofflineManager.StopZoffline();
             HostsManager.RemoveAllEntries();
-            UpdateUI("未运行", false, false);
+            UpdateUI("未运行", false, true, false);
         }
 
-        private void UpdateUI(string status, bool isProgressBarIndeterminate, bool enableStopButton = false)
+        private void UpdateUI(string status, bool isProgressBarIndeterminate, bool enableStartButton, bool enableStopButton)
         {
             ProcessStatusText.Text = status;
             LoadingProgressBar.IsIndeterminate = isProgressBarIndeterminate;
-            StartButton.IsEnabled = !enableStopButton;
+            StartButton.IsEnabled = enableStartButton;
             StopButton.IsEnabled = enableStopButton;
         }
     }
