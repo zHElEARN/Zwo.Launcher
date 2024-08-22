@@ -62,14 +62,14 @@ namespace Zwo.Launcher.Pages
                         var latestReleaseInfo = ZofflineManager.GetLatestReleaseInfo();
                         latestLocalVersion = ZofflineManager.ParseZofflineVersion(latestReleaseInfo.TagName);
 
-                        UpdateUI("ÕıÔÚÏÂÔØ×îĞÂ°æ±¾ zoffline", true);
+                        UpdateUI("æ­£åœ¨ä¸‹è½½æœ€æ–°ç‰ˆæœ¬ zoffline", true);
                         await ZofflineManager.DownloadZofflineAsync(latestReleaseInfo, LoadingProgressBar);
                     }
                 }
                 HostsManager.AddEntry(zwiftHostsEntry);
                 await ConfigureClient.RunConfigureClientAsync(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
                 ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
-                UpdateUI("ÔËĞĞÖĞ", false, true);
+                UpdateUI("è¿è¡Œä¸­", false, true);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Zwo.Launcher.Pages
         {
             ZofflineManager.StopZoffline();
             HostsManager.RemoveAllEntries();
-            UpdateUI("Î´ÔËĞĞ", false, false);
+            UpdateUI("æœªè¿è¡Œ", false, false);
         }
 
         private void UpdateUI(string status, bool isProgressBarIndeterminate, bool enableStopButton = false)

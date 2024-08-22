@@ -51,7 +51,7 @@ namespace Zwo.Launcher.Pages
                     }
                     else
                     {
-                        ZwiftVersion.Text = "Î´°²×°";
+                        ZwiftVersion.Text = "æœªå®‰è£…";
                     }
                     ZofflineVersion.Text = zofflineVersion;
                     LoadingProgressBar.IsIndeterminate = false;
@@ -60,7 +60,7 @@ namespace Zwo.Launcher.Pages
 
             if (ZofflineManager.IsStarted)
             {
-                StartButtonText.Text = "ÕıÔÚÔËĞĞ";
+                StartButtonText.Text = "æ­£åœ¨è¿è¡Œ";
                 StartButtonFontIcon.Glyph = "\uF0AF";
             }
         }

@@ -48,9 +48,9 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                          LoadingProgressBar.ShowError = true;
                          ContentDialog dialog = new ContentDialog();
                          dialog.XamlRoot = this.XamlRoot;
-                         dialog.Title = "≥ˆœ÷¥ÌŒÛ";
-                         dialog.PrimaryButtonText = "∏¥÷∆–≈œ¢≤¢πÿ±’";
-                         dialog.CloseButtonText = "πÿ±’";
+                         dialog.Title = "Âá∫Áé∞ÈîôËØØ";
+                         dialog.PrimaryButtonText = "Â§çÂà∂‰ø°ÊÅØÂπ∂ÂÖ≥Èó≠";
+                         dialog.CloseButtonText = "ÂÖ≥Èó≠";
                          dialog.Content = ex.Message;
 
                          var result = await dialog.ShowAsync();
@@ -80,7 +80,7 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
             if (index != -1)
             {
                 DownloadSelectedButton.IsEnabled = false;
-                DownloadStatusText.Text = "œ¬‘ÿ÷–";
+                DownloadStatusText.Text = "‰∏ãËΩΩ‰∏≠";
                 LoadingProgressBar.IsIndeterminate = true;
                 await ZofflineManager.DownloadZofflineAsync(releaseInfoList[index], LoadingProgressBar);
                 ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);

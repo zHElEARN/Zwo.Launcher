@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,12 +26,43 @@ namespace Zwo.Launcher
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private bool _isExited = false;
+
         public MainWindow()
         {
             this.InitializeComponent();
 
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(AppTitleBar);
+
+            this.Closed += MainWindow_Closed;
+        }
+
+        private async void MainWindow_Closed(object sender, WindowEventArgs args)
+        {
+            if (_isExited)
+            {
+                base.Close();
+                return;
+            }
+            args.Handled = true;
+
+            var dialog = new ContentDialog
+            {
+                XamlRoot = this.Content.XamlRoot,
+                Title = "确认关闭",
+                Content = "你确定要关闭这个窗口吗?",
+                PrimaryButtonText = "是",
+                SecondaryButtonText = "否"
+            };
+
+            dialog.PrimaryButtonClick += (s, _) =>
+            {
+                _isExited = true;
+                Application.Current.Exit();
+            };
+
+            await dialog.ShowAsync();
         }
 
         public void Navigate(Type pageType, int index = -1, object parameter = null)

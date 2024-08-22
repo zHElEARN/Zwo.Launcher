@@ -42,7 +42,7 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                     {
                         string zwiftInstallLocation = await ZwiftManager.GetInstallLocationAsync(zwiftKey);
 
-                        ZwiftStatusText.Text = "�Ѱ�װ";
+                        ZwiftStatusText.Text = "已安装";
                         ZwiftLocationText.Text = zwiftInstallLocation;
                         ZwiftVersionText.Text = ZwiftManager.GetVersion(zwiftInstallLocation);
                         DetailedVersionText.Text = ZwiftManager.GetXmlVersion(zwiftInstallLocation);
@@ -51,10 +51,10 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                     else
                     {
                         ZwiftProgressBar.ShowError = true;
-                        ZwiftStatusText.Text = "δ��װ";
-                        ZwiftLocationText.Text = "δ��װ";
-                        ZwiftVersionText.Text = "δ��װ";
-                        DetailedVersionText.Text = "δ��װ";
+                        ZwiftStatusText.Text = "未安装";
+                        ZwiftLocationText.Text = "未安装";
+                        ZwiftVersionText.Text = "未安装";
+                        DetailedVersionText.Text = "未安装";
                     }
                     ZwiftProgressBar.IsIndeterminate = false;
                 });
