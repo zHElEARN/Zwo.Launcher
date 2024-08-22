@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -218,7 +219,7 @@ namespace Zwo.Launcher.Utils
             var fileName = Path.GetFileName(releaseInfo.BrowserDownloadUrl);
             var filePath = Path.Combine(downloadDirectory, fileName);
 
-            var httpClient = new HttpClient();
+            var httpClient = ProxyManager.GetHttpClient();
 
             ConfigurationManager.LoadConfiguration();
             var url = ConfigurationManager.Config.DownloadAcceleration.IsEnabled ?
@@ -274,7 +275,7 @@ namespace Zwo.Launcher.Utils
             }
 
             var url = "https://api.github.com/repos/zoffline/zwift-offline/releases/latest";
-            var httpClient = new HttpClient();
+            var httpClient = ProxyManager.GetHttpClient();
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible)");
 
             var response = httpClient.GetStreamAsync(url).Result;
@@ -302,7 +303,7 @@ namespace Zwo.Launcher.Utils
             }
 
             var url = "https://api.github.com/repos/zoffline/zwift-offline/releases";
-            var httpClient = new HttpClient();
+            var httpClient = ProxyManager.GetHttpClient();
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible)");
 
             var response = await httpClient.GetStringAsync(url);
