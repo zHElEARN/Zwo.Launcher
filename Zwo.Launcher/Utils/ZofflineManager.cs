@@ -219,7 +219,13 @@ namespace Zwo.Launcher.Utils
             var filePath = Path.Combine(downloadDirectory, fileName);
 
             var httpClient = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, releaseInfo.BrowserDownloadUrl);
+
+            ConfigurationManager.LoadConfiguration();
+            var url = ConfigurationManager.Config.DownloadAcceleration.IsEnabled ?
+                ConfigurationManager.Config.DownloadAcceleration.Mirror + releaseInfo.BrowserDownloadUrl
+                : releaseInfo.BrowserDownloadUrl;
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
             using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
             response.EnsureSuccessStatusCode();

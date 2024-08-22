@@ -67,6 +67,6 @@ namespace Zwo.Launcher.Utils
         public bool IsEnabled { get; set; } = true;
 
         [JsonPropertyName("mirror")]
-        public string Mirror { get; set; } = "mirror.ghproxy.com";
+        public string Mirror { get; set; } = "https://mirror.ghproxy.com/";
     }
 }
