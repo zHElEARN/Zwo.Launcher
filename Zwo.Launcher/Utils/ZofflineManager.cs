@@ -124,20 +124,16 @@ namespace Zwo.Launcher.Utils
 
         public static void StopZoffline()
         {
-            if (!IsStarted || _zofflineProcess == null) return;
+            if (!IsStarted || _zofflineProcess == null || _zofflineProcess.HasExited) return;
 
             string zofflineProcessName = _zofflineProcess.ProcessName;
 
-            if (!_zofflineProcess.HasExited)
-            {
-                _zofflineProcess.Kill(true);
-            }
+            _zofflineProcess.Kill(true);
 
-            Process[] processes = Process.GetProcesses();
+            Process[] processes = Process.GetProcessesByName(zofflineProcessName);
             foreach (Process process in processes)
             {
-                string processName = process.ProcessName;
-                if (string.Equals(processName, zofflineProcessName, StringComparison.OrdinalIgnoreCase))
+                if (!process.HasExited)
                 {
                     process.Kill();
                     process.WaitForExit();

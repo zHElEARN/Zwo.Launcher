@@ -40,16 +40,16 @@ namespace Zwo.Launcher.Pages
             base.OnNavigatedTo(e);
             if (e.Parameter is ValueTuple<string, string> message && message.Item1 == "start")
             {
-                await StartZofflineAsync(message.Item2);
+                await StartAsync(message.Item2);
             }
         }
 
         private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            await StartZofflineAsync("latest");
+            await StartAsync("latest");
         }
 
-        private async Task StartZofflineAsync(string version)
+        private async Task StartAsync(string version)
         {
             if (!ZofflineManager.IsStarted)
             {
@@ -71,6 +71,7 @@ namespace Zwo.Launcher.Pages
                 ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
                 UpdateUI("运行中", false, false, true);
             }
+            ZwiftManager.RunZwift(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -82,6 +83,7 @@ namespace Zwo.Launcher.Pages
         {
             ZofflineManager.StopZoffline();
             HostsManager.RemoveAllEntries();
+            ZwiftManager.StopZwift();
             UpdateUI("未运行", false, true, false);
         }
 

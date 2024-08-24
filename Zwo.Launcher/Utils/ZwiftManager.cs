@@ -16,6 +16,34 @@ namespace zlauncher.Zwift
         private static string _cachedVersion = null;
         private static string _cachedXmlVersion = null;
 
+        public static void RunZwift(string zwiftInstallLocation)
+        {
+            string zwiftPath = Path.Combine(zwiftInstallLocation, "ZwiftLauncher.exe");
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = zwiftPath,
+                UseShellExecute = true,
+            });
+        }
+
+        public static void StopZwift()
+        {
+            Process[] processes = Process.GetProcessesByName("ZwiftLauncher");
+            foreach (Process process in processes)
+            {
+                process.Kill(true);
+                process.WaitForExit();
+            }
+
+            processes = Process.GetProcessesByName("ZwiftApp");
+            foreach (Process process in processes)
+            {
+                process.Kill(true);
+                process.WaitForExit();
+            }
+        }
+
         public static async Task<string> GetZwiftKeyAsync()
         {
             if (_cachedZwiftKey != null)
