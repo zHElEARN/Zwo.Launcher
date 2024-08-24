@@ -15,6 +15,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Zwo.Launcher.Pages;
 using Zwo.Launcher.Pages.EnvInformationPage;
+using Zwo.Launcher.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,29 +41,35 @@ namespace Zwo.Launcher
 
         private async void MainWindow_Closed(object sender, WindowEventArgs args)
         {
-            if (_isExited)
+            if (!ZofflineManager.IsStarted || _isExited)
             {
                 base.Close();
                 return;
             }
-            args.Handled = true;
-
-            var dialog = new ContentDialog
+            else
             {
-                XamlRoot = this.Content.XamlRoot,
-                Title = "确认关闭",
-                Content = "你确定要关闭这个窗口吗?",
-                PrimaryButtonText = "是",
-                SecondaryButtonText = "否"
-            };
+                args.Handled = true;
 
-            dialog.PrimaryButtonClick += (s, _) =>
-            {
-                _isExited = true;
-                Application.Current.Exit();
-            };
+                var dialog = new ContentDialog
+                {
+                    XamlRoot = this.Content.XamlRoot,
+                    Title = "确认关闭",
+                    Content = "zoffline 未退出，你确定要退出启动器吗?",
+                    PrimaryButtonText = "是",
+                    SecondaryButtonText = "否"
+                };
 
-            await dialog.ShowAsync();
+                dialog.PrimaryButtonClick += (s, _) =>
+                {
+                    ZofflineManager.StopZoffline();
+                    HostsManager.RemoveAllEntries();
+
+                    _isExited = true;
+                    base.Close();
+                };
+
+                await dialog.ShowAsync();
+            }
         }
 
         public void Navigate(Type pageType, int index = -1, object parameter = null)

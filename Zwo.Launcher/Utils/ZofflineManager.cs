@@ -247,17 +247,13 @@ namespace Zwo.Launcher.Utils
                 await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
                 totalRead += bytesRead;
 
-                if (totalBytes != -1 && progressBar != null)
+                if (totalBytes != -1)
                 {
                     double progress = (double)totalRead / totalBytes * 100;
                     progressBar.Value = progress;
                 }
             }
-
-            if (progressBar != null)
-            {
-                progressBar.Value = 100;
-            }
+            progressBar.Value = 100;
         }
 
         public static string ParseZofflineVersion(string zofflineTagName)
