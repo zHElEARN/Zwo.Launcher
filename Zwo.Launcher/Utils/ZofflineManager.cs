@@ -39,9 +39,9 @@ namespace Zwo.Launcher.Utils
         {
             outputBox.DispatcherQueue.TryEnqueue(() =>
             {
+                outputBox.Document.GetText(TextGetOptions.None, out var sourceText);
                 outputBox.IsReadOnly = false;
-                outputBox.Document.Selection.SetRange(outputBox.Document.Selection.EndPosition, outputBox.Document.Selection.EndPosition);
-                outputBox.Document.Selection.Text = $"{text}\n";
+                outputBox.Document.SetText(TextSetOptions.None, $"{sourceText}{text}");
                 outputBox.IsReadOnly = true;
             });
         }
