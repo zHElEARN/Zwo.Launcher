@@ -10,16 +10,10 @@ namespace Zwo.Launcher.Utils
 {
     static class HostsManager
     {
-        public class HostsEntry
+        public class HostsEntry(string ipAddress, List<string> domains)
         {
-            public string IpAddress { get; set; }
-            public List<string> Domains { get; set; }
-
-            public HostsEntry(string ipAddress, List<string> domains)
-            {
-                IpAddress = ipAddress;
-                Domains = domains;
-            }
+            public string IpAddress { get; set; } = ipAddress;
+            public List<string> Domains { get; set; } = domains;
 
             public override string ToString()
             {
@@ -28,7 +22,7 @@ namespace Zwo.Launcher.Utils
 
             public static HostsEntry Parse(string line)
             {
-                var parts = line.Split(new[] {' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
+                var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length < 2)
                 {
                     return null;

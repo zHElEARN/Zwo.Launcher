@@ -28,7 +28,7 @@ namespace Zwo.Launcher.Pages
     /// </summary>
     public sealed partial class ZofflineLogPage : Page
     {
-        private HostsManager.HostsEntry zwiftHostsEntry = new HostsManager.HostsEntry("127.0.0.1", new List<string> { "us-or-rly101.zwift.com", "secure.zwift.com", "cdn.zwift.com", "launcher.zwift.com" });
+        private readonly HostsManager.HostsEntry zwiftHostsEntry = new("127.0.0.1", ["us-or-rly101.zwift.com", "secure.zwift.com", "cdn.zwift.com", "launcher.zwift.com"]);
 
         public ZofflineLogPage()
         {

@@ -28,20 +28,18 @@ namespace Zwo.Launcher.Utils
                 Arguments = $"\"{zwiftPath}\"",
             };
 
-            using (var process = Process.Start(processStartInfo))
+            using var process = Process.Start(processStartInfo);
+            process.Start();
+
+            string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
+
+            process.WaitForExit();
+
+            Debug.WriteLine(output);
+            if (!string.IsNullOrEmpty(error))
             {
-                process.Start();
-
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error = await process.StandardError.ReadToEndAsync();
-
-                process.WaitForExit();
-
-                Debug.WriteLine(output);
-                if (!string.IsNullOrEmpty(error))
-                {
-                    Debug.WriteLine($"Error: {error}");
-                }
+                Debug.WriteLine($"Error: {error}");
             }
         }
     }

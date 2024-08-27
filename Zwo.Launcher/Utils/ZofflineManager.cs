@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Zwo.Launcher.Utils
 {
-    class ZofflineManager
+    partial class ZofflineManager
     {
         public class ReleaseInfo
         {
@@ -34,6 +34,12 @@ namespace Zwo.Launcher.Utils
 
         public static bool IsStarted { get; private set; } = false;
         private static Process _zofflineProcess;
+
+        [GeneratedRegex(@"zoffline_(\d+\.\d+\.\d+)\.exe")]
+        private static partial Regex VersionRegex();
+
+        [GeneratedRegex(@"zoffline_(.*)$")]
+        private static partial Regex ZofflineTagRegex();
 
         private static void AppendTextToOutputBox(RichEditBox outputBox, string text)
         {
@@ -143,8 +149,8 @@ namespace Zwo.Launcher.Utils
 
         public static int CompareVersions(string version1, string version2)
         {
-            Version v1 = new Version(version1);
-            Version v2 = new Version(version2);
+            Version v1 = new(version1);
+            Version v2 = new(version2);
 
             return v1.CompareTo(v2);
         }
@@ -154,7 +160,7 @@ namespace Zwo.Launcher.Utils
             string zofflineDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".zlauncher", "zoffline");
             var files = Directory.GetFiles(zofflineDirectory, "zoffline_*.exe");
 
-            Regex versionRegex = new Regex(@"zoffline_(\d+\.\d+\.\d+)\.exe");
+            Regex versionRegex = VersionRegex();
 
             var latestFile = files
                 .Select(file => new
@@ -193,7 +199,7 @@ namespace Zwo.Launcher.Utils
 
                 if (filePath != null)
                 {
-                    FileInfo fileInfo = new FileInfo(filePath);
+                    FileInfo fileInfo = new(filePath);
                     if (fileInfo.Length == releaseInfo.Size)
                     {
                         releaseInfo.IsExistingLocally = true;
@@ -254,7 +260,7 @@ namespace Zwo.Launcher.Utils
 
         public static string ParseZofflineVersion(string zofflineTagName)
         {
-            var regex = new Regex(@"zoffline_(.*)$");
+            var regex = ZofflineTagRegex();
             var match = regex.Match(zofflineTagName);
             return match.Success ? match.Groups[1].Value : null;
         }
