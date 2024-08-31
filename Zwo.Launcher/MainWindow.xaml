@@ -42,7 +42,9 @@
                         <FontIcon Glyph="&#xE768;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                
                 <NavigationViewItemSeparator />
+                
                 <NavigationViewItem Content="环境信息" Tag="EnvInformation">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
@@ -51,6 +53,14 @@
                 <NavigationViewItem Content="Zoffline 日志" Tag="ZofflineLog">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7C3;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemSeparator />
+
+                <NavigationViewItem Content="工具" Tag="Tools">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC7A;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

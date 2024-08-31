@@ -102,6 +102,9 @@ namespace Zwo.Launcher
                     case "ZofflineLog":
                         Navigate(typeof(ZofflineLogPage));
                         break;
+                    case "Tools":
+                        Navigate(typeof(ToolsPage));
+                        break;
                 }
             }
         }
