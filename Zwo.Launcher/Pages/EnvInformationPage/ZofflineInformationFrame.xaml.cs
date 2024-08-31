@@ -45,32 +45,37 @@ namespace Zwo.Launcher.Pages.EnvInformationPage
                 {
                     DispatcherQueue.TryEnqueue(async () =>
                    {
-                         LoadingProgressBar.ShowError = true;
-                         ContentDialog dialog = new ContentDialog();
-                         dialog.XamlRoot = this.XamlRoot;
-                         dialog.Title = "出现错误";
-                         dialog.PrimaryButtonText = "复制信息并关闭";
-                         dialog.CloseButtonText = "关闭";
-                         dialog.Content = ex.Message;
+                       LoadingProgressBar.ShowError = true;
+                       ContentDialog dialog = new ContentDialog();
+                       dialog.XamlRoot = this.XamlRoot;
+                       dialog.Title = "出现错误";
+                       dialog.PrimaryButtonText = "复制信息并关闭";
+                       dialog.CloseButtonText = "关闭";
+                       dialog.Content = ex.Message;
 
-                         var result = await dialog.ShowAsync();
-                         if (result == ContentDialogResult.Primary)
-                         {
-                             var package = new DataPackage();
-                             package.SetText(ex.Message);
-                             Clipboard.SetContent(package);
-                         }
-                     });
+                       var result = await dialog.ShowAsync();
+                       if (result == ContentDialogResult.Primary)
+                       {
+                           var package = new DataPackage();
+                           package.SetText(ex.Message);
+                           Clipboard.SetContent(package);
+                       }
+                   });
                 }
 
                 ZofflineManager.MarkExistingZofflineFiles(releaseInfoList);
 
                 DispatcherQueue.TryEnqueue(() =>
-               {
-                     ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfoList[0].TagName);
-                     ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
-                     LoadingProgressBar.IsIndeterminate = false;
-                 });
+                {
+                    ZofflineRemoteLatestText.Text = ZofflineManager.ParseZofflineVersion(releaseInfoList[0].TagName);
+                    ZofflineVersionsDataGrid.ItemsSource = releaseInfoList;
+                    LoadingProgressBar.IsIndeterminate = false;
+
+                    bool shouldDownloadLatestVersion = ZofflineManager.ShouldDownloadLatestVersion(out var latestLocalVersion);
+
+                    ZofflineLocalUsedText.Text = latestLocalVersion;
+                    ZofflineVersionStatusText.Text = shouldDownloadLatestVersion ? "需更新" : "无需更新";
+                });
             });
         }
 
