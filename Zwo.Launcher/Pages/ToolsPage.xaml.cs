@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,6 +27,24 @@ namespace Zwo.Launcher.Pages
         public ToolsPage()
         {
             this.InitializeComponent();
+        }
+
+        private void EditHostsSettingsCard_Click(object sender, RoutedEventArgs e)
+        {
+            string hostsFilePath = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\System32\drivers\etc\hosts");
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "notepad.exe",
+                Arguments = hostsFilePath,
+                UseShellExecute = true,
+                Verb = "runas"
+            });
+        }
+
+        private void FixHostsSettingsCard_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -18,7 +18,8 @@
                     Grid.Column="0"
                     Header="编辑 Hosts 文件"
                     Description="使用文本编辑器直接编辑 Hosts 文件"
-                    IsClickEnabled="True">
+                    IsClickEnabled="True"
+                    Click="EditHostsSettingsCard_Click">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE70B;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -27,7 +28,8 @@
                     Grid.Column="1"
                     Header="修复 Hosts 文件"
                     Description="自动删除 Hosts 文件中已存在的 Zoffline 配置"
-                    IsClickEnabled="True">
+                    IsClickEnabled="True"
+                    Click="FixHostsSettingsCard_Click">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xEC7A;" />
                     </controls:SettingsCard.HeaderIcon>
