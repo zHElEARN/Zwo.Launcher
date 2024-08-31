@@ -126,6 +126,7 @@ namespace Zwo.Launcher
         {
             this.InitializeComponent();
             RegisterWindowMinMax(this);
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(1100, 600));
 
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(AppTitleBar);

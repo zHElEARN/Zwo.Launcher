@@ -43,7 +43,7 @@ namespace Zwo.Launcher.Pages
             });
         }
 
-        private void FixHostsSettingsCard_Click(object sender, RoutedEventArgs e)
+        private async void FixHostsSettingsCard_Click(object sender, RoutedEventArgs e)
         {
             HostsManager.RemoveAllEntries();
 
@@ -55,6 +55,16 @@ namespace Zwo.Launcher.Pages
                     HostsManager.RemoveEntryOutsideBlock(entry);
                 }
             }
+
+            ContentDialog dialog = new()
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "已修复",
+                Content = "已删除 Hosts 文件中已存在的 Zoffline 配置",
+                PrimaryButtonText = "OK",
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }
