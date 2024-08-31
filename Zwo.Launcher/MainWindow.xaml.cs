@@ -203,5 +203,16 @@ namespace Zwo.Launcher
                 }
             }
         }
+
+        private void NavView_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+        {
+            AppTitleBar.Margin = new Thickness()
+            {
+                Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
+                Top = AppTitleBar.Margin.Top,
+                Right = AppTitleBar.Margin.Right,
+                Bottom = AppTitleBar.Margin.Bottom
+            };
+        }
     }
 }

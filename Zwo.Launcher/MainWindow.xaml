@@ -13,29 +13,37 @@
     </Window.SystemBackdrop>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+        <Grid
+            x:Name="AppTitleBar"
+            Canvas.ZIndex="1"
+            IsHitTestVisible="True"
+            Height="{Binding ElementName=NavView, Path=CompactPaneLength}"
+            VerticalAlignment="Top">
+            <Image
+                Source="Assets/StoreLogo.scale-400.png"
+                HorizontalAlignment="Left"
+                Width="16" Height="16"
+                Margin="0,0" />
 
-        <Grid x:Name="AppTitleBar">
             <TextBlock
-            Text="Zwo.Launcher"
-            TextWrapping="NoWrap"
-            Style="{StaticResource CaptionTextBlockStyle}" 
-            VerticalAlignment="Center"
-            Margin="28,0,0,0" />
+                Text="Zwo.Launcher"
+                TextWrapping="NoWrap"
+                Style="{StaticResource CaptionTextBlockStyle}" 
+                VerticalAlignment="Center"
+                Margin="28,0,0,0" />
         </Grid>
 
         <NavigationView
-        Grid.Row="1"
-        x:Name="NavView"
-        SelectedItem="{Binding ElementName=NavItemStart}"
-        SelectionChanged="NavView_SelectionChanged"
-        IsBackButtonVisible="Collapsed"
-        OpenPaneLength="180"
-        PaneDisplayMode="Left"
-        IsPaneOpen="True">
+            Grid.Row="1"
+            Canvas.ZIndex="0"
+            x:Name="NavView"
+            SelectedItem="{Binding ElementName=NavItemStart}"
+            SelectionChanged="NavView_SelectionChanged"
+            DisplayModeChanged="NavView_DisplayModeChanged"
+            IsBackButtonVisible="Collapsed"
+            OpenPaneLength="180"
+            PaneDisplayMode="Left"
+            IsPaneOpen="True">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="启动" Tag="Start" x:Name="NavItemStart">
                     <NavigationViewItem.Icon>
