@@ -22,6 +22,11 @@ namespace Zwo.Launcher.Utils
 
             public static HostsEntry Parse(string line)
             {
+                if (string.IsNullOrWhiteSpace(line) || line.Trim().StartsWith('#'))
+                {
+                    return null;
+                }
+
                 var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length < 2)
                 {
@@ -128,6 +133,75 @@ namespace Zwo.Launcher.Utils
             int endIndex = hostsFileContent.IndexOf(ProgramBlockEnd);
 
             return (startIndex, endIndex);
+        }
+
+        public static void AddEntryOutsideBlock(HostsEntry entry)
+        {
+            var hostsFileContent = File.ReadAllLines(HostsFilePath).ToList();
+            var programBlockIndex = FindProgramBlockIndex(hostsFileContent);
+
+            if (programBlockIndex.Item1 == -1)
+            {
+                hostsFileContent.Add(entry.ToString());
+            }
+            else
+            {
+                hostsFileContent.Insert(programBlockIndex.Item1, entry.ToString());
+            }
+
+            File.WriteAllLines(HostsFilePath, hostsFileContent);
+        }
+
+        public static void RemoveEntryOutsideBlock(HostsEntry entry)
+        {
+            var hostsFileContent = File.ReadAllLines(HostsFilePath).ToList();
+            var programBlockIndex = FindProgramBlockIndex(hostsFileContent);
+
+            if (programBlockIndex.Item1 != -1)
+            {
+                hostsFileContent = hostsFileContent.Where((line, index) =>
+                    index >= programBlockIndex.Item1 || !entry.Equals(HostsEntry.Parse(line))).ToList();
+            }
+            else
+            {
+                hostsFileContent = hostsFileContent.Where(line => !entry.Equals(HostsEntry.Parse(line))).ToList();
+            }
+
+            File.WriteAllLines(HostsFilePath, hostsFileContent);
+        }
+
+        public static List<HostsEntry> GetEntriesOutsideBlock()
+        {
+            var hostsFileContent = File.ReadAllLines(HostsFilePath).ToList();
+            var programBlockIndex = FindProgramBlockIndex(hostsFileContent);
+            var entries = new List<HostsEntry>();
+
+            if (programBlockIndex.Item1 != -1)
+            {
+                for (int i = 0; i < programBlockIndex.Item1; i++)
+                {
+                    var entry = HostsEntry.Parse(hostsFileContent[i]);
+                    if (entry != null)
+                    {
+                        entries.Add(entry);
+                    }
+                }
+
+                for (int i = programBlockIndex.Item2 + 1; i < hostsFileContent.Count; i++)
+                {
+                    var entry = HostsEntry.Parse(hostsFileContent[i]);
+                    if (entry != null)
+                    {
+                        entries.Add(entry);
+                    }
+                }
+            }
+            else
+            {
+                entries = hostsFileContent.Select(HostsEntry.Parse).Where(entry => entry != null).ToList();
+            }
+
+            return entries;
         }
     }
 }

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Zwo.Launcher.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,7 +45,16 @@ namespace Zwo.Launcher.Pages
 
         private void FixHostsSettingsCard_Click(object sender, RoutedEventArgs e)
         {
+            HostsManager.RemoveAllEntries();
 
+            var externalEntries = HostsManager.GetEntriesOutsideBlock();
+            foreach (var entry in externalEntries)
+            {
+                if (entry.Domains.Exists(domain => domain.Contains("zwift", StringComparison.OrdinalIgnoreCase)))
+                {
+                    HostsManager.RemoveEntryOutsideBlock(entry);
+                }
+            }
         }
     }
 }
