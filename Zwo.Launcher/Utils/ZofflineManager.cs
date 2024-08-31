@@ -41,6 +41,9 @@ namespace Zwo.Launcher.Utils
         [GeneratedRegex(@"zoffline_(.*)$")]
         private static partial Regex ZofflineTagRegex();
 
+        [GeneratedRegex(@"INFO:zoffline:Server version \d+\.\d+\.\d+ \(\d+\) is running\.")]
+        private static partial Regex ZofflineStartLogRegex();
+
         private static void AppendTextToOutputBox(RichEditBox outputBox, string text)
         {
             outputBox.DispatcherQueue.TryEnqueue(() =>
@@ -63,15 +66,14 @@ namespace Zwo.Launcher.Utils
                 fileSize != latestReleaseInfo.Size;
         }
 
-        public static void RunZoffline(string version, RichEditBox outputBox)
+        public static void RunZoffline(string version, RichEditBox outputBox, Action onInfoDetected)
         {
             if (IsStarted) return;
 
             outputBox.DispatcherQueue.TryEnqueue(() =>
             {
                 outputBox.IsReadOnly = false;
-                outputBox.Document.Selection.SetRange(0, outputBox.Document.Selection.EndPosition);
-                outputBox.Document.Selection.Text = string.Empty;
+                outputBox.Document.SetText(TextSetOptions.None, string.Empty);
                 outputBox.IsReadOnly = true;
             });
 
@@ -93,21 +95,21 @@ namespace Zwo.Launcher.Utils
                 EnableRaisingEvents = true,
             };
 
-            _zofflineProcess.OutputDataReceived += (sender, args) =>
+            void dataReceivedEventHandler(object sender, DataReceivedEventArgs args)
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
                     AppendTextToOutputBox(outputBox, args.Data);
-                }
-            };
 
-            _zofflineProcess.ErrorDataReceived += (sender, args) =>
-            {
-                if (!string.IsNullOrEmpty(args.Data))
-                {
-                    AppendTextToOutputBox(outputBox, args.Data);
+                    if (ZofflineStartLogRegex().IsMatch(args.Data))
+                    {
+                        onInfoDetected?.Invoke();
+                    }
                 }
-            };
+            }
+
+            _zofflineProcess.OutputDataReceived += dataReceivedEventHandler;
+            _zofflineProcess.ErrorDataReceived += dataReceivedEventHandler;
 
             _zofflineProcess.Exited += (sender, args) =>
             {

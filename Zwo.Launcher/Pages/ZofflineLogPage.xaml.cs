@@ -68,10 +68,12 @@ namespace Zwo.Launcher.Pages
                 }
                 HostsManager.AddEntry(zwiftHostsEntry);
                 await ConfigureClient.RunConfigureClientAsync(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
-                ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox);
+                ZofflineManager.RunZoffline(latestLocalVersion, LogRichEditBox, async () =>
+                {
+                    ZwiftManager.RunZwift(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
+                });
                 UpdateUI("运行中", false, false, true);
             }
-            ZwiftManager.RunZwift(await ZwiftManager.GetInstallLocationAsync(await ZwiftManager.GetZwiftKeyAsync()));
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
