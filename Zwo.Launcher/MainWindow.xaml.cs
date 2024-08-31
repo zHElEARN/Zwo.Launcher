@@ -10,9 +10,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Isolation;
 using Zwo.Launcher.Pages;
 using Zwo.Launcher.Pages.EnvInformationPage;
 using Zwo.Launcher.Utils;
@@ -27,11 +29,103 @@ namespace Zwo.Launcher
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private static WinProc newWndProc = null;
+        private static IntPtr oldWndProc = IntPtr.Zero;
+        private delegate IntPtr WinProc(IntPtr hWnd, WindowMessage Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("User32.dll")]
+        internal static extern int GetDpiForWindow(IntPtr hWnd);
+
+        [DllImport("User32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, WindowLongIndexFlags nIndex, WinProc newProc);
+
+        [DllImport("User32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, WindowLongIndexFlags nIndex, WinProc newProc);
+
+        [DllImport("User32.dll")]
+        private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, WindowMessage Msg, IntPtr wParam, IntPtr lParam);
+
+        public static int MinWindowWidth { get; set; } = 1100;
+        public static int MaxWindowWidth { get; set; } = 0;
+        public static int MinWindowHeight { get; set; } = 600;
+        public static int MaxWindowHeight { get; set; } = 0;
+
+        private static void RegisterWindowMinMax(Window window)
+        {
+            var hwnd = GetWindowHandleForCurrentWindow(window);
+
+            newWndProc = new WinProc(WndProc);
+            oldWndProc = SetWindowLongPtr(hwnd, WindowLongIndexFlags.GWL_WNDPROC, newWndProc);
+        }
+
+        private static IntPtr GetWindowHandleForCurrentWindow(object target) => WinRT.Interop.WindowNative.GetWindowHandle(target);
+
+        private static IntPtr WndProc(IntPtr hWnd, WindowMessage Msg, IntPtr wParam, IntPtr lParam)
+        {
+            switch (Msg)
+            {
+                case WindowMessage.WM_GETMINMAXINFO:
+                    var dpi = GetDpiForWindow(hWnd);
+                    var scalingFactor = (float)dpi / 96;
+
+                    var minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+                    minMaxInfo.ptMinTrackSize.x = (int)(MinWindowWidth * scalingFactor);
+                    // minMaxInfo.ptMaxTrackSize.x = (int)(MaxWindowWidth * scalingFactor);
+                    minMaxInfo.ptMinTrackSize.y = (int)(MinWindowHeight * scalingFactor);
+                    // minMaxInfo.ptMaxTrackSize.y = (int)(MaxWindowHeight * scalingFactor);
+
+                    Marshal.StructureToPtr(minMaxInfo, lParam, true);
+                    break;
+            }
+
+            return CallWindowProc(oldWndProc, hWnd, Msg, wParam, lParam);
+        }
+
+        private static IntPtr SetWindowLongPtr(IntPtr hWnd, WindowLongIndexFlags nIndex, WinProc newProc)
+        {
+            if (IntPtr.Size == 8)
+            {
+                return SetWindowLongPtr64(hWnd, nIndex, newProc);
+            }
+            else
+            {
+                return new IntPtr(SetWindowLong32(hWnd, nIndex, newProc));
+            }
+        }
+
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        }
+
+        [Flags]
+        private enum WindowLongIndexFlags : int
+        {
+            GWL_WNDPROC = -4
+        }
+
+        private enum WindowMessage : int
+        {
+            WM_GETMINMAXINFO = 0x0024
+        }
+
         private bool _isExited = false;
 
         public MainWindow()
         {
             this.InitializeComponent();
+            RegisterWindowMinMax(this);
 
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(AppTitleBar);
